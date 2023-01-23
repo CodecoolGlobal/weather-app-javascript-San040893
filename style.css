@@ -49,7 +49,7 @@ body {
   border: rgb(224, 223, 223) 2px solid;
   background-color: transparent;
   padding: 1rem;
-  border-radius: 3px;
+  border-radius: 50rem;
   height: 3rem;
   width: 100%;
   font-size: 1.6rem;
@@ -80,6 +80,14 @@ body {
   text-align: center;
 }
 
+.small-text {
+  font-size: 1.0rem;
+}
+
 .medium-text {
-  font-size: 1.2rem;
+  font-size: 2.0rem;
+}
+
+.large-text {
+  font-size: 3.0rem;
 }
