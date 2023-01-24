@@ -13,6 +13,13 @@ const dataList = document.getElementById("cities");
 
 const buildOptions = (text) => `<option value="${text}"></option>`;
 
+/**Function sends GET request to URL,
+ * in case of success returns Promise,
+ * otherwide error will be thrown
+ * @param {string} url, 
+ * @param {string} errorMsg, 
+ * @returns {Promise} Promise(data,json())
+ */
 function getJSONData(url, errorMsg = "Something went wrong") {
   return fetch(url).then((response) => {
     if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
@@ -20,8 +27,12 @@ function getJSONData(url, errorMsg = "Something went wrong") {
     return response.json();
   });
 }
-
-function getParameters(p) {
+/**Function formats parameter Object
+ * and convert it into usable query String
+ * @param {Object} p 
+ * @returns Formated String 
+ */
+function formatParameters(p) {
   const parameters = new URLSearchParams(p);
   return `?${parameters.toString()}`;
 }
@@ -38,26 +49,20 @@ input.addEventListener("keyup", () => {
   if (input.value.length < 3) {
     return;
   }
-
-  fetch(
-    `http://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${input.value}`
-  )
-    .then((response) => response.json())
+  const url = `http://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${input.value}`;
+  getJSONData(url, "Problem getting Locations")
     .then((locations) => populateAutocompleteList(locations))
     .catch((error) => console.log("Error", error));
 });
 
-async function getWeatherData(parameters) {
-  const weatherData = await fetch(
-    `${weather_api_path}${forecast_weather}${parameters}`
-  );
-  if (!weatherData.ok) throw new Error("Problem getting weather data");
-  const data = await weatherData.json();
-  return data;
+function getWeatherData(parameters) {
+  const url = `${weather_api_path}${forecast_weather}${parameters}`;
+  return getJSONData(url, "Problem getting Weather Data");
 }
 
+// test get weather data //
 (async () => {
-  const weatherData = await getWeatherData(getParameters(parameters));
+  const weatherData = await getWeatherData(formatParameters(parameters));
   console.log(weatherData);
 })();
 
