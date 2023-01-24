@@ -73,12 +73,23 @@ function getWeatherData(parameters) {
 
 
 
+function getPicUrl (){
+const picUrl = `https://api.pexels.com/v1/search`
+const cityParameter = {
+  query: "Macaw",
+  orientation: "Landscape",
+  size: "medium",
+  color: "turquoise",
+  per_page: 1
+}
 
+const cityParameterString = formatParameters(cityParameter)
 
-
-
-
-
+const changePicUrl = `${picUrl}${cityParameterString}`;
+getJSONData(changePicUrl, "Problem getting Locations")
+  .then((pic) => console.log((pic)))
+  .catch((error) => console.log("Error", error));
+}
 
 
 
@@ -90,7 +101,6 @@ function getWeatherData(parameters) {
 
 
 function changeBackgroundPic(url){
-  let url = "https://image.geo.de/30139388/t/ef/v3/w1440/r1/-/wien-f-175321055-jpg--79261-.jpg"
   document.body.style.backgroundImage = `url(${url})`;
 }
 
