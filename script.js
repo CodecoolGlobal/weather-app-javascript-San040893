@@ -84,8 +84,10 @@ async function getWeatherData(parameters) {
 
 
 
-
-
+function changeBackgroundPic(url){
+  let url = "https://image.geo.de/30139388/t/ef/v3/w1440/r1/-/wien-f-175321055-jpg--79261-.jpg"
+  document.body.style.backgroundImage = `url(${url})`;
+}
 
 
 function updateWeather() {
@@ -95,5 +97,6 @@ function updateWeather() {
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     updateWeather();
+    changeBackgroundPic();
   }
 });
