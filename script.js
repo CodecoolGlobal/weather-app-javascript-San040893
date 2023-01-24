@@ -60,13 +60,24 @@ function getWeatherData(parameters) {
   return getJSONData(url, "Problem getting Weather Data");
 }
 
-// test get weather data //
+ // test get weather data //
 (async () => {
   const weatherData = await getWeatherData(formatParameters(parameters));
-  console.log(weatherData);
+  
 })();
+ 
+
+function renderWeather(weatherData){
+  // render Weather-box 
+  document.getElementById("current-city").innerText = weatherData.location.name;
+  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}`;
+  
 
 
+  // render weather-extra-info
+
+  // render weather prognosis
+}
 
 
 
@@ -74,35 +85,44 @@ function getWeatherData(parameters) {
 
 
 function getPicUrl (){
-const picUrl = `https://api.pexels.com/v1/search`
-const cityParameter = {
-  query: input,
-  orientation: "Landscape",
-  size: "large",
-  per_page: 1
+  const PEXELS_API = "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db "
+  const picUrl = `https://api.pexels.com/v1/search`
+  const cityParameter = {
+
+    query: input.value,
+    orientation: "Landscape",
+    size: "medium",
+    per_page: 1
+  }
+  const cityParameterString = formatParameters(cityParameter)
+  const changePicUrl = `${picUrl}${cityParameterString}`;
+
+  const myHeaders = new Headers({Authorization: PEXELS_API});
+
+  const myRequest = new Request(changePicUrl, {
+    method: 'GET',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+  });
+
+  getJSONData(myRequest, "Problem getting Locations")
+    .then((pic) => picOfCity(pic))
+    .catch((error) => console.log("Error", error));
 }
 
-const cityParameterString = formatParameters(cityParameter)
-
-const changePicUrl = `${picUrl}${cityParameterString}`;
-getJSONData(changePicUrl, "Problem getting Locations")
-  .then((pic) => console.log((pic)))
-  .catch((error) => console.log("Error", error));
+function picOfCity(pic){
+ let  picUrl = pic.photos[0].url
+return picUrl
 }
 
+getPicUrl();
 
+function changeBackgroundPic(){
 
-
-
-
-
-
-
-
-function changeBackgroundPic(url){
-  document.body.style.backgroundImage = `url(${url})`;
+  document.body.style.backgroundImage = `url(${getPicUrl()})`;
 }
-
+ 
 
 function updateWeather() {
   console.log("Sunny");
