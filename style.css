@@ -106,6 +106,7 @@ body {
   text-align: center;
   flex-grow: 1;
   height:7rem;
+  align-self: end;
 }
 
 .weather-prognosis-box-hour > i{

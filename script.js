@@ -55,15 +55,13 @@ function getWeatherData(parameters) {
   const url = `${weather_api_path}${forecast_weather}${parameters}`;
   return getJSONData(url, "Problem getting Weather Data");
 }
-/* 
- // test get weather data //
-(async () => {
-  const weatherData = await getWeatherData(formatParameters(parameters));
-  renderWeather(weatherData);
-})();
-  */
-function renderForecastHourly(element, time, temp_c, condition) {
+
+
+function renderForecastHourly(element, time, temp_c, condition, avg) {
+  console.log(time, temp_c, condition, avg)
   const weatherIconClass = weatherTextToIcon[condition];
+  element.style.height = 7 + temp_c/ avg + "rem";
+
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
       <div class="small-text">${temp_c}&#8451;</div>
@@ -86,7 +84,8 @@ function renderWeather(weatherData) {
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     condition = condition.text;
-    renderForecastHourly(el, time, temp_c, condition);
+    const averageTemp = weatherData.forecast.forecastday[0].day.avgtemp_c;
+    renderForecastHourly(el, time, temp_c, condition, averageTemp);
   });
 
   // render Weather-box
@@ -167,5 +166,6 @@ input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     updateWeather(input.value);
     changeBackgroundPic(input.value);
+    input.value="";
   }
 });

@@ -1,5 +1,6 @@
 const weatherTextToIcon = {
     Overcast: "icon-weather-cloud",
+    Cloudy: "icon-weather-cloud",
     Sunny: "icon-weather-sun",
     "Partly cloudy": "icon-weather-variable-sun",
     Clear: "icon-weather-sun",
