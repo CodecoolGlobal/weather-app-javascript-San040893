@@ -63,6 +63,7 @@ function getWeatherData(parameters) {
  // test get weather data //
 (async () => {
   const weatherData = await getWeatherData(formatParameters(parameters));
+  renderWeather(weatherData)
   console.log(weatherData);
 })();
  
@@ -70,11 +71,19 @@ function getWeatherData(parameters) {
 function renderWeather(weatherData){
   // render Weather-box 
   document.getElementById("current-city").innerText = weatherData.location.name;
-  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}`;
+  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}&#8451`;
+  document.getElementById("current-condition").innerText = weatherData.current.condition.text;
+  document.getElementById("current-feel").innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  document.getElementById("geo-position").innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
   
-
-
   // render weather-extra-info
+  document.getElementById("current-wind").innerHTML = `H: ${weatherData.current.wind_kph} km/h `;
+  document.getElementById("current-precip_mm").innerHTML = `L:${weatherData.current.precip_mm} mm`;
+  document.getElementById("current-cloud").innerHTML = `H: ${weatherData.current.cloud} %`;
+
+
+
+
 
   // render weather prognosis
 }
