@@ -76,10 +76,9 @@ function getWeatherData(parameters) {
 function getPicUrl (){
 const picUrl = `https://api.pexels.com/v1/search`
 const cityParameter = {
-  query: "Macaw",
+  query: input,
   orientation: "Landscape",
-  size: "medium",
-  color: "turquoise",
+  size: "large",
   per_page: 1
 }
 
