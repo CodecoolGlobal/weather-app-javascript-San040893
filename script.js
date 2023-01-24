@@ -60,3 +60,40 @@ async function getWeatherData(parameters) {
   const weatherData = await getWeatherData(getParameters(parameters));
   console.log(weatherData);
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function updateWeather() {
+  console.log("Sunny");
+}
+
+input.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    updateWeather();
+  }
+});
