@@ -16,8 +16,8 @@ const buildOptions = (text) => `<option value="${text}"></option>`;
 /**Function sends GET request to URL,
  * in case of success returns Promise,
  * otherwide error will be thrown
- * @param {string} url, 
- * @param {string} errorMsg, 
+ * @param {string} url,
+ * @param {string} errorMsg,
  * @returns {Promise} Promise(data,json())
  */
 function getJSONData(url, errorMsg = "Something went wrong") {
@@ -29,8 +29,8 @@ function getJSONData(url, errorMsg = "Something went wrong") {
 }
 /**Function formats parameter Object
  * and convert it into usable query String
- * @param {Object} p 
- * @returns Formated String 
+ * @param {Object} p
+ * @returns Formated String
  */
 function formatParameters(p) {
   const parameters = new URLSearchParams(p);
@@ -60,69 +60,60 @@ function getWeatherData(parameters) {
   return getJSONData(url, "Problem getting Weather Data");
 }
 
- // test get weather data //
+// test get weather data //
 (async () => {
   const weatherData = await getWeatherData(formatParameters(parameters));
-  
 })();
- 
 
-function renderWeather(weatherData){
-  // render Weather-box 
+function renderWeather(weatherData) {
+  // render Weather-box
   document.getElementById("current-city").innerText = weatherData.location.name;
-  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}`;
-  
-
+  document.getElementById(
+    "current-temperature"
+  ).innerHTML = `${weatherData.current.temp_c}`;
 
   // render weather-extra-info
 
   // render weather prognosis
 }
 
-
-
-
-
-
-function getPicUrl (){
-  const PEXELS_API = "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db "
-  const picUrl = `https://api.pexels.com/v1/search`
+function getPicUrl() {
+  const PEXELS_API =
+    "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
+  const picUrl = `https://api.pexels.com/v1/search`;
   const cityParameter = {
-
     query: input.value,
     orientation: "Landscape",
     size: "medium",
-    per_page: 1
-  }
-  const cityParameterString = formatParameters(cityParameter)
+    per_page: 1,
+  };
+  const cityParameterString = formatParameters(cityParameter);
   const changePicUrl = `${picUrl}${cityParameterString}`;
 
-  const myHeaders = new Headers({Authorization: PEXELS_API});
+  const myHeaders = new Headers({ Authorization: PEXELS_API });
 
   const myRequest = new Request(changePicUrl, {
-    method: 'GET',
+    method: "GET",
     headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
+    mode: "cors",
+    cache: "default",
   });
 
   getJSONData(myRequest, "Problem getting Locations")
     .then((pic) => picOfCity(pic))
     .catch((error) => console.log("Error", error));
+
+  
+}
+function picOfCity(pic) {
+  let picUrl = (pic.photos[0].src.medium).split("?")[0];
+  return picUrl;
 }
 
-function picOfCity(pic){
- let  picUrl = pic.photos[0].url
-return picUrl
-}
 
-getPicUrl();
-
-function changeBackgroundPic(){
-
+function changeBackgroundPic() {
   document.body.style.backgroundImage = `url(${getPicUrl()})`;
 }
- 
 
 function updateWeather() {
   console.log("Sunny");
