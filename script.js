@@ -84,6 +84,23 @@ function renderWeather(weatherData){
 
 
 
+function getPicUrl (){
+const picUrl = `https://api.pexels.com/v1/search`
+const cityParameter = {
+  query: "Macaw",
+  orientation: "Landscape",
+  size: "medium",
+  color: "turquoise",
+  per_page: 1
+}
+
+const cityParameterString = formatParameters(cityParameter)
+
+const changePicUrl = `${picUrl}${cityParameterString}`;
+getJSONData(changePicUrl, "Problem getting Locations")
+  .then((pic) => console.log((pic)))
+  .catch((error) => console.log("Error", error));
+}
 
 
 
@@ -94,14 +111,9 @@ function renderWeather(weatherData){
 
 
 
-
-
-
-
-
-
-
-
+function changeBackgroundPic(url){
+  document.body.style.backgroundImage = `url(${url})`;
+}
 
 
 function updateWeather() {
@@ -111,5 +123,6 @@ function updateWeather() {
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     updateWeather();
+    changeBackgroundPic();
   }
 });
