@@ -63,26 +63,61 @@ function getWeatherData(parameters) {
 // test get weather data //
 (async () => {
   const weatherData = await getWeatherData(formatParameters(parameters));
+<<<<<<< HEAD
+=======
+  renderWeather(weatherData)
+  console.log(weatherData);
+  
+>>>>>>> 55e9a380adf2372e90b61ae8f6837df4c4c71576
 })();
 
 function renderWeather(weatherData) {
   // render Weather-box
   document.getElementById("current-city").innerText = weatherData.location.name;
+<<<<<<< HEAD
   document.getElementById(
     "current-temperature"
   ).innerHTML = `${weatherData.current.temp_c}`;
 
+=======
+  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}&#8451`;
+  document.getElementById("current-condition").innerText = weatherData.current.condition.text;
+  document.getElementById("current-feel").innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  document.getElementById("geo-position").innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+  
+>>>>>>> 55e9a380adf2372e90b61ae8f6837df4c4c71576
   // render weather-extra-info
+  document.getElementById("current-wind").innerHTML = `H: ${weatherData.current.wind_kph} km/h `;
+  document.getElementById("current-precip_mm").innerHTML = `L:${weatherData.current.precip_mm} mm`;
+  document.getElementById("current-cloud").innerHTML = `H: ${weatherData.current.cloud} %`;
+
+
+
+
 
   // render weather prognosis
 }
 
+<<<<<<< HEAD
 function getPicUrl() {
   const PEXELS_API =
     "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
   const picUrl = `https://api.pexels.com/v1/search`;
   const cityParameter = {
     query: input.value,
+=======
+
+
+
+
+
+async function getPicUrl (dataName){
+  const PEXELS_API = "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db "
+  const picUrl = `https://api.pexels.com/v1/search`
+  const cityParameter = {
+
+    query: dataName,
+>>>>>>> 55e9a380adf2372e90b61ae8f6837df4c4c71576
     orientation: "Landscape",
     size: "medium",
     per_page: 1,
@@ -99,6 +134,7 @@ function getPicUrl() {
     cache: "default",
   });
 
+<<<<<<< HEAD
   getJSONData(myRequest, "Problem getting Locations")
     .then((pic) => picOfCity(pic))
     .catch((error) => console.log("Error", error));
@@ -113,6 +149,16 @@ function picOfCity(pic) {
 
 function changeBackgroundPic() {
   document.body.style.backgroundImage = `url(${getPicUrl()})`;
+=======
+  const cityData = await getJSONData(myRequest, "Problem getting Locations");
+  return (cityData.photos[0].src.medium).split("?")[0];
+}
+
+
+
+async function changeBackgroundPic(cityName){
+  document.body.style.backgroundImage = `url("${await getPicUrl(cityName)}")`;
+>>>>>>> 55e9a380adf2372e90b61ae8f6837df4c4c71576
 }
 
 function updateWeather() {
@@ -122,6 +168,6 @@ function updateWeather() {
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     updateWeather();
-    changeBackgroundPic();
+    changeBackgroundPic(input.value);
   }
 });
