@@ -60,13 +60,24 @@ function getWeatherData(parameters) {
   return getJSONData(url, "Problem getting Weather Data");
 }
 
-// test get weather data //
+ // test get weather data //
 (async () => {
   const weatherData = await getWeatherData(formatParameters(parameters));
   console.log(weatherData);
 })();
+ 
+
+function renderWeather(weatherData){
+  // render Weather-box 
+  document.getElementById("current-city").innerText = weatherData.location.name;
+  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}`;
+  
 
 
+  // render weather-extra-info
+
+  // render weather prognosis
+}
 
 
 
