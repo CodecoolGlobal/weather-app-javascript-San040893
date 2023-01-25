@@ -2,11 +2,7 @@ const API_KEY = "6291b1eb57924843b8b234211232301";
 const weather_api_path = "http://api.weatherapi.com/v1";
 const current_weather = "/current.json";
 const forecast_weather = "/forecast.json";
-const parameters = {
-  key: API_KEY,
-  q: "Vienna",
-  days: 2,
-};
+
 
 const input = document.getElementById("input-cities");
 const dataList = document.getElementById("cities");
@@ -60,32 +56,62 @@ function getWeatherData(parameters) {
   return getJSONData(url, "Problem getting Weather Data");
 }
 
-// test get weather data //
-(async () => {
-  const weatherData = await getWeatherData(formatParameters(parameters));
-  renderWeather(weatherData)
-  console.log(weatherData);
-  
-})();
+
+function renderForecastHourly(element, time, temp_c, condition, avg) {
+  console.log(time, temp_c, condition, avg)
+  const weatherIconClass = weatherTextToIcon[condition];
+  element.style.height = 7 + temp_c/ avg + "rem";
+
+  element.innerHTML = `
+      <i class="${weatherIconClass}"></i>  
+      <div class="small-text">${temp_c}&#8451;</div>
+      <div class="small-text">${time} h</div>`;
+}
 
 function renderWeather(weatherData) {
+  // render weather prognosis
+  const d = new Date();
+  // let hour = d.getHours();
+  let hour = parseInt(weatherData.location.localtime.split(" ")[1].split(":")[0]);
+
+  const forecastHourlyUpdateEl = document.querySelectorAll(
+    ".weather-prognosis-box-hour"
+  );
+  forecastHourlyUpdateEl.forEach((el, index) => {
+    let day = hour + index > 24 ? 1 : 0;
+    
+    let { time, temp_c, condition } =
+      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
+    time = parseInt(time.split(" ")[1]);
+    condition = condition.text;
+    const averageTemp = weatherData.forecast.forecastday[0].day.avgtemp_c;
+    renderForecastHourly(el, time, temp_c, condition, averageTemp);
+  });
+
   // render Weather-box
   document.getElementById("current-city").innerText = weatherData.location.name;
-  document.getElementById("current-temperature").innerHTML = `${weatherData.current.temp_c}&#8451`;
-  document.getElementById("current-condition").innerText = weatherData.current.condition.text;
-  document.getElementById("current-feel").innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
-  document.getElementById("geo-position").innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
-  
+  document.getElementById(
+    "current-temperature"
+  ).innerHTML = `${weatherData.current.temp_c}&#8451`;
+  document.getElementById("current-condition").innerText =
+    weatherData.current.condition.text;
+  document.getElementById(
+    "current-feel"
+  ).innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  document.getElementById(
+    "geo-position"
+  ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+
   // render weather-extra-info
-  document.getElementById("current-wind").innerHTML = `H: ${weatherData.current.wind_kph} km/h `;
-  document.getElementById("current-precip_mm").innerHTML = `L:${weatherData.current.precip_mm} mm`;
-  document.getElementById("current-cloud").innerHTML = `H: ${weatherData.current.cloud} %`;
-
-
-
-
-
-  // render weather prognosis
+  document.getElementById(
+    "current-wind"
+  ).innerHTML = `${weatherData.current.wind_kph} kph `;
+  document.getElementById(
+    "current-precip_mm"
+  ).innerHTML = `${weatherData.current.precip_mm} mm`;
+  document.getElementById(
+    "current-cloud"
+  ).innerHTML = `${weatherData.current.cloud} %`;
 }
 
 
@@ -125,13 +151,20 @@ async function changeBackgroundPic(cityName){
   document.body.style.backgroundImage = `url("${await getPicUrl(cityName)}")`;
 }
 
-function updateWeather() {
-  console.log("Sunny");
+async function updateWeather(cityName) {
+  const parameters = {
+    key: API_KEY,
+    q: cityName,
+    days: 2,
+  };
+  const weatherData = await getWeatherData(formatParameters(parameters));
+  renderWeather(weatherData);
 }
 
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
-    updateWeather();
+    updateWeather(input.value);
     changeBackgroundPic(input.value);
+    input.value="";
   }
 });

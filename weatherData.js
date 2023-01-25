@@ -1,5 +1,6 @@
-weatherTextToIcon = {
+const weatherTextToIcon = {
     Overcast: "icon-weather-cloud",
+    Cloudy: "icon-weather-cloud",
     Sunny: "icon-weather-sun",
     "Partly cloudy": "icon-weather-variable-sun",
     Clear: "icon-weather-sun",
@@ -30,7 +31,7 @@ weatherTextToIcon = {
     Mist: "icon-weather-fog",
     "Freezing fog": "icon-weather-fog",
 }
-simpleTextToIcon = {
+const simpleTextToIcon = {
     Sun: "icon-weather-sun",
     Cloud: "icon-weather-cloud",
     Snow: "icon-weather-snowflake"
