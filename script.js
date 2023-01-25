@@ -2,6 +2,7 @@ const API_KEY = "6291b1eb57924843b8b234211232301";
 const weather_api_path = "http://api.weatherapi.com/v1";
 const current_weather = "/current.json";
 const forecast_weather = "/forecast.json";
+const weatherSimpleData = {};
 
 const input = document.getElementById("input-cities");
 const dataList = document.getElementById("cities");
@@ -118,18 +119,7 @@ function renderWeather(weatherData) {
   });
 
   // render Weather-box
-  document.getElementById("current-city").innerText = weatherData.location.name;
-  document.getElementById(
-    "current-temperature"
-  ).innerHTML = `${weatherData.current.temp_c}&#8451`;
-  document.getElementById("current-condition").innerText =
-    weatherData.current.condition.text;
-  document.getElementById(
-    "current-feel"
-  ).innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
-  document.getElementById(
-    "geo-position"
-  ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+  renderWeatherBox(weatherData);
 
   // render weather-extra-info
   document.getElementById(
@@ -141,6 +131,11 @@ function renderWeather(weatherData) {
   document.getElementById(
     "current-cloud"
   ).innerHTML = `${weatherData.current.cloud} %`;
+}
+
+function toggleSpinner(){
+  document.getElementById("spinner-box").classList.toggle("hide");
+  document.getElementById("weather-box").classList.toggle("hide");
 }
 
 async function getPicUrl(dataName) {
@@ -175,7 +170,7 @@ async function getPicUrl(dataName) {
 
 function iconToWeather(condition) {
   
-  if () {
+  if (true) {
     return document.body.style.backgroundImage = "./img/sunny.jpg";
   } else {
     return document.body.style.backgroundImage = "./img/cloudy.jpg";
@@ -188,12 +183,14 @@ async function changeBackgroundPic(cityName) {
 }
 
 async function updateWeather(cityName) {
+  toggleSpinner();
   const parameters = {
     key: API_KEY,
     q: cityName,
     days: 2,
   };
   const weatherData = await getWeatherData(formatParameters(parameters));
+  toggleSpinner();
   renderWeather(weatherData);
 }
 
