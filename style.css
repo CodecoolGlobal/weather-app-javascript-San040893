@@ -129,3 +129,7 @@ body {
 .extra-large-text {
   font-size: 6.0rem;
 }
+
+.hide {
+  display: none;
+}

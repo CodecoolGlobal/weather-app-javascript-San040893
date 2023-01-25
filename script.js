@@ -66,6 +66,32 @@ function renderForecastHourly(element, time, temp_c, condition, avg) {
       <div class="small-text">${time} h</div>`;
 }
 
+
+
+function renderWeatherBox(weatherData){
+ /*  
+  document.getElementById("current-city").innerText = weatherData.location.name;
+  document.getElementById(
+    "current-temperature"
+  ).innerHTML = `${weatherData.current.temp_c}&#8451`;
+  document.getElementById("current-condition").innerText =
+    weatherData.current.condition.text;
+  document.getElementById(
+    "current-feel"
+  ).innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  document.getElementById(
+    "geo-position"
+  ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+ */
+    document.getElementById("weather-box").innerHTML = `
+      <h2 class="weather-box-city medium-text">${weatherData.location.name}</h2>
+      <h1 class="weather-temperature extra-large-text">${weatherData.current.temp_c}&#8451</h1>
+      <h3 class="weather-condition medium-text">${weatherData.current.condition.text}</h3>
+      <p class="feels-like">Feels like ${weatherData.current.feelslike_c}&#8451;</p>
+      <p class="weather-position">H:${weatherData.location.lat.toFixed()} L:${weatherData.location.lon.toFixed()}</p>
+    `
+}
+
 function renderWeather(weatherData) {
   // render weather prognosis
   const d = new Date();
@@ -89,18 +115,7 @@ function renderWeather(weatherData) {
   });
 
   // render Weather-box
-  document.getElementById("current-city").innerText = weatherData.location.name;
-  document.getElementById(
-    "current-temperature"
-  ).innerHTML = `${weatherData.current.temp_c}&#8451`;
-  document.getElementById("current-condition").innerText =
-    weatherData.current.condition.text;
-  document.getElementById(
-    "current-feel"
-  ).innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
-  document.getElementById(
-    "geo-position"
-  ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+  renderWeatherBox(weatherData);
 
   // render weather-extra-info
   document.getElementById(
