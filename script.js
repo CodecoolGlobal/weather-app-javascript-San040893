@@ -59,17 +59,14 @@ function renderForecastHourly(element, time, temp_c, condition, avg) {
   console.log(time, temp_c, condition, avg);
   const weatherIconClass = weatherTextToIcon[condition];
   element.style.height = 7 + temp_c / avg + "rem";
-
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
       <div class="small-text">${temp_c}&#8451;</div>
       <div class="small-text">${time} h</div>`;
 }
 
-
-
-function renderWeatherBox(weatherData){
- /*  
+function renderWeatherBox(weatherData) {
+  /*  
   document.getElementById("current-city").innerText = weatherData.location.name;
   document.getElementById(
     "current-temperature"
@@ -83,13 +80,19 @@ function renderWeatherBox(weatherData){
     "geo-position"
   ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
  */
-    document.getElementById("weather-box").innerHTML = `
+  document.getElementById("weather-box").innerHTML = `
       <h2 class="weather-box-city medium-text">${weatherData.location.name}</h2>
-      <h1 class="weather-temperature extra-large-text">${weatherData.current.temp_c}&#8451</h1>
-      <h3 class="weather-condition medium-text">${weatherData.current.condition.text}</h3>
-      <p class="feels-like">Feels like ${weatherData.current.feelslike_c}&#8451;</p>
+      <h1 class="weather-temperature extra-large-text">${
+        weatherData.current.temp_c
+      }&#8451</h1>
+      <h3 class="weather-condition medium-text">${
+        weatherData.current.condition.text
+      }</h3>
+      <p class="feels-like">Feels like ${
+        weatherData.current.feelslike_c
+      }&#8451;</p>
       <p class="weather-position">H:${weatherData.location.lat.toFixed()} L:${weatherData.location.lon.toFixed()}</p>
-    `
+    `;
 }
 
 function renderWeather(weatherData) {
@@ -115,7 +118,18 @@ function renderWeather(weatherData) {
   });
 
   // render Weather-box
-  renderWeatherBox(weatherData);
+  document.getElementById("current-city").innerText = weatherData.location.name;
+  document.getElementById(
+    "current-temperature"
+  ).innerHTML = `${weatherData.current.temp_c}&#8451`;
+  document.getElementById("current-condition").innerText =
+    weatherData.current.condition.text;
+  document.getElementById(
+    "current-feel"
+  ).innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  document.getElementById(
+    "geo-position"
+  ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
 
   // render weather-extra-info
   document.getElementById(
@@ -151,9 +165,23 @@ async function getPicUrl(dataName) {
     cache: "default",
   });
 
-  const cityData = await getJSONData(myRequest, "Problem getting Locations");
+  try {
+    const cityData = await getJSONData(myRequest, "Problem getting Locations");
+    return cityData.photos[0].src.medium.split("?")[0];
+  } catch (error) {
+    iconToWeather();
+    
+  }
+}
 
-  return cityData.photos[0].src.medium.split("?")[0];
+function iconToWeather() {
+  
+  if (weatherTextToIcon[condition] == "sunny") {
+    return document.body.style.backgroundImage = "./img/sunny.jpg";
+  } else {
+    return document.body.style.backgroundImage = "./img/cloudy.jpg";
+  
+  }
 }
 
 async function changeBackgroundPic(cityName) {
