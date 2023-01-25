@@ -57,12 +57,8 @@ function getWeatherData(parameters) {
 
 function renderForecastHourly(element, time, temp_c, condition, avg) {
   const weatherIconClass = weatherTextToIcon[condition];
-<<<<<<< HEAD
-  element.style.height = 7 + temp_c / avg + "rem";
-=======
   element.style.height = 7 + ((5/30) * temp_c)  + "rem";
 
->>>>>>> f754be5eb7c3a1295a99b2a58a4d8ba59a3d86b9
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
       <div class="small-text">${temp_c}&#8451;</div>
