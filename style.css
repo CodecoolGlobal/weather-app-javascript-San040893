@@ -22,12 +22,13 @@ body {
 }
 
 .main-container {
-    max-height: 80vh;
-    min-width: 30rem;
+    height: 60rem;
+    /* max-height: 80vh; */
+    max-width: 30rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     padding: 2rem;
 
     position: absolute;
@@ -47,14 +48,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* min-height: 10rem; */
   width: 80%;
   margin: 1rem 0 3rem 0;
 }
 
 .favourites-icon {
   display: inline-block;
-  /* padding-right: 1rem; */
   font-size: 3rem;
   color: #b1b1b1;
 }

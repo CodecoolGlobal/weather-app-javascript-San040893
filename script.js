@@ -1,5 +1,8 @@
-const API_KEY = "6291b1eb57924843b8b234211232301";
-const weather_api_path = "http://api.weatherapi.com/v1";
+const weatherApiUrl = "http://api.weatherapi.com/v1";
+const weatherApiKEY = "6291b1eb57924843b8b234211232301";
+const pexelApiUrl = `https://api.pexels.com/v1/search`;
+const pexelsApiKEY ="dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
+
 const current_weather = "/current.json";
 const forecast_weather = "/forecast.json";
 const weatherSimpleData = {};
@@ -11,7 +14,7 @@ const buildOptions = (text) => `<option value="${text}"></option>`;
 
 /**Function sends GET request to URL,
  * in case of success returns Promise,
- * otherwide error will be thrown
+ * otherwise error will be thrown
  * @param {string} url,
  * @param {string} errorMsg,
  * @returns {Promise} Promise(data,json())
@@ -24,7 +27,7 @@ function getJSONData(url, errorMsg = "Something went wrong") {
   });
 }
 /**Function formats parameter Object
- * and convert it into usable query String
+ * and converts it into usable query String
  * @param {Object} p
  * @returns Formated String
  */
@@ -45,14 +48,14 @@ input.addEventListener("keyup", () => {
   if (input.value.length < 3) {
     return;
   }
-  const url = `http://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${input.value}`;
+  const url = `http://api.weatherapi.com/v1/search.json?key=${weatherApiKEY}&q=${input.value}`;
   getJSONData(url, "Problem getting Locations")
     .then((locations) => populateAutocompleteList(locations))
     .catch((error) => console.error("Error", error));
 });
 
 function getWeatherData(parameters) {
-  const url = `${weather_api_path}${forecast_weather}${parameters}`;
+  const url = `${weatherApiUrl}${forecast_weather}${parameters}`;
   return getJSONData(url, "Problem getting Weather Data");
 }
 
@@ -69,7 +72,6 @@ function renderForecastHourly(weatherData) {
     ".weather-prognosis-box-hour"
   );
 
-  //////////////////////////////////////////////////////
   forecastHourlyUpdateEl.forEach((el, index) => {
     const day = hour + index > 24 ? 1 : 0;
     let { time, temp_c, condition } = weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
@@ -86,7 +88,6 @@ function renderForecastHourly(weatherData) {
 function renderWeather(weatherData) {
   weatherSimpleData["condition"] = weatherData.current.condition.text;
   
-  ////////////////////////////////////////////////////////////
   // render Weather-box
   document.getElementById("current-city").innerText = weatherData.location.name;
   document.getElementById(
@@ -100,7 +101,6 @@ function renderWeather(weatherData) {
   document.getElementById(
     "geo-position"
   ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
-  ////////////////////////////////////////////////////////////
   // render weather-extra-info
   document.getElementById(
     "current-wind"
@@ -116,49 +116,43 @@ function renderWeather(weatherData) {
   renderForecastHourly(weatherData);
 }
 
-function cityNotFoundMsg() {
-}
 
-function toggleSpinner() {
+function toggleSpinnerAndWeatherBox() {
   document.getElementById("spinner-box").classList.toggle("hide");
   document.getElementById("weather-box").classList.toggle("hide");
 }
 
-async function getPicUrl(dataName) {
-  const PEXELS_API =
-    "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
-  const picUrl = `https://api.pexels.com/v1/search`;
+async function getPicData(cityName) {
   const cityParameter = {
-    query: dataName,
+    query: cityName,
     orientation: "Landscape",
     size: "medium",
     per_page: 1,
   };
   const cityParameterString = formatParameters(cityParameter);
-  const changePicUrl = `${picUrl}${cityParameterString}`;
+  const requestPicUrl = `${pexelApiUrl}${cityParameterString}`;
 
-  const myHeaders = new Headers({ Authorization: PEXELS_API });
+  const myHeaders = new Headers({ Authorization: pexelsApiKEY });
 
-  const myRequest = new Request(changePicUrl, {
+  const myRequest = new Request(requestPicUrl, {
     method: "GET",
     headers: myHeaders,
     mode: "cors",
     cache: "default",
   });
-  try {
-    const cityData = await getJSONData(myRequest, "Problem getting Locations");
-    // console.log(cityData);
+
+  return await getJSONData(myRequest, "Problem getting Locations");
+}
+
+function parsePicUrl(cityData) {    
     if (cityData.photos.length === 0) {
-      return iconToWeather();
+      return iconToBackgroundImg();
     } else {
       return cityData.photos[0].src.original;
     }
-  } catch (error) {
-    console.log("error");
-  }
 }
 
-function iconToWeather() {
+function iconToBackgroundImg() {
   console.log(weatherSimpleData.condition);
   if (weatherSimpleData.condition.includes("cloudy")) {
     return "./img/cloudy.jpg";
@@ -176,14 +170,21 @@ function iconToWeather() {
 }
 
 async function changeBackgroundPic(cityName) {
-  document.body.style.backgroundImage = `url("${await getPicUrl(cityName)}")`;
+try {
+  const cityData = await getPicData(cityName);
+  const picUrl = parsePicUrl(cityData);
+  document.body.style.backgroundImage = `url("${picUrl}")`;
+} catch (error) {
+  console.error(error);
+  iconToBackgroundImg();
+}
 }
 
 async function updateWeather(cityName) {
   try {
-    toggleSpinner();
+    toggleSpinnerAndWeatherBox();
     const parameters = {
-      key: API_KEY,
+      key: weatherApiKEY,
       q: cityName,
       days: 2,
     };
@@ -194,7 +195,7 @@ async function updateWeather(cityName) {
     document.getElementById("current-city").innerText = "City not found";
     console.error(error);
   } finally {
-    toggleSpinner();
+    toggleSpinnerAndWeatherBox();
   }
 }
 
@@ -205,3 +206,4 @@ input.addEventListener("keypress", function (e) {
     input.value = "";
   }
 });
+
