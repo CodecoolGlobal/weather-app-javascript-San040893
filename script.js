@@ -1,11 +1,21 @@
 const weatherApiUrl = "http://api.weatherapi.com/v1";
 const weatherApiKEY = "6291b1eb57924843b8b234211232301";
 const pexelApiUrl = `https://api.pexels.com/v1/search`;
-const pexelsApiKEY ="dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
+const pexelsApiKEY =
+  "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
 
 const current_weather = "/current.json";
 const forecast_weather = "/forecast.json";
 const weatherSimpleData = {};
+
+const currentCityEl = document.getElementById("current-city");
+const currentTemperatureEl = document.getElementById("current-temperature");
+const currentConditionEl = document.getElementById("current-condition");
+const currentFeelEl = document.getElementById("current-feel");
+const geoPositionEl = document.getElementById("geo-position");
+const currentWind = document.getElementById("current-wind");
+const currentPercipEl = document.getElementById("current-precip_mm");
+const currentCloudEl = document.getElementById("current-cloud");
 
 const input = document.getElementById("input-cities");
 const dataList = document.getElementById("cities");
@@ -60,9 +70,8 @@ function getWeatherData(parameters) {
 }
 
 function resetHTMLWeatherData() {
-  document.querySelectorAll(".reset").forEach(el=>el.innerText="-");
-};
-
+  document.querySelectorAll(".reset").forEach((el) => (el.innerText = "-"));
+}
 
 function renderForecastHourly(weatherData) {
   const hour = parseInt(
@@ -74,10 +83,11 @@ function renderForecastHourly(weatherData) {
 
   forecastHourlyUpdateEl.forEach((el, index) => {
     const day = hour + index > 24 ? 1 : 0;
-    let { time, temp_c, condition } = weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
+    let { time, temp_c, condition } =
+      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     el.style.height = 7 + (5 / 30) * temp_c + "rem";
-    
+
     el.innerHTML = `
       <i class="${weatherTextToIcon[condition.text]}"></i>  
       <div class="small-text reset">${temp_c}&#8451;</div>
@@ -87,35 +97,21 @@ function renderForecastHourly(weatherData) {
 
 function renderWeather(weatherData) {
   weatherSimpleData["condition"] = weatherData.current.condition.text;
-  
+
   // render Weather-box
-  document.getElementById("current-city").innerText = weatherData.location.name;
-  document.getElementById(
-    "current-temperature"
-  ).innerHTML = `${weatherData.current.temp_c}&#8451`;
-  document.getElementById("current-condition").innerText =
-    weatherData.current.condition.text;
-  document.getElementById(
-    "current-feel"
-  ).innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
-  document.getElementById(
-    "geo-position"
-  ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+  currentCityEl.innerText = weatherData.location.name;
+  currentTemperatureEl.innerHTML = `${weatherData.current.temp_c}&#8451`;
+  currentConditionEl.innerText = weatherData.current.condition.text;
+  currentFeelEl.innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  geoPositionEl.innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
   // render weather-extra-info
-  document.getElementById(
-    "current-wind"
-  ).innerHTML = `${weatherData.current.wind_kph} kph `;
-  document.getElementById(
-    "current-precip_mm"
-  ).innerHTML = `${weatherData.current.precip_mm} mm`;
-  document.getElementById(
-    "current-cloud"
-  ).innerHTML = `${weatherData.current.cloud} %`;
+  currentWind.innerHTML = `${weatherData.current.wind_kph} kph `;
+  currentPercipEl.innerHTML = `${weatherData.current.precip_mm} mm`;
+  currentCloudEl.innerHTML = `${weatherData.current.cloud} %`;
 
   // render weather prognosis
   renderForecastHourly(weatherData);
 }
-
 
 function toggleSpinnerAndWeatherBox() {
   document.getElementById("spinner-box").classList.toggle("hide");
@@ -144,12 +140,12 @@ async function getPicData(cityName) {
   return await getJSONData(myRequest, "Problem getting Locations");
 }
 
-function parsePicUrl(cityData) {    
-    if (cityData.photos.length === 0) {
-      return iconToBackgroundImg();
-    } else {
-      return cityData.photos[0].src.original;
-    }
+function parsePicUrl(cityData) {
+  if (cityData.photos.length === 0) {
+    return iconToBackgroundImg();
+  } else {
+    return cityData.photos[0].src.original;
+  }
 }
 
 function iconToBackgroundImg() {
@@ -170,14 +166,14 @@ function iconToBackgroundImg() {
 }
 
 async function changeBackgroundPic(cityName) {
-try {
-  const cityData = await getPicData(cityName);
-  const picUrl = parsePicUrl(cityData);
-  document.body.style.backgroundImage = `url("${picUrl}")`;
-} catch (error) {
-  console.error(error);
-  iconToBackgroundImg();
-}
+  try {
+    const cityData = await getPicData(cityName);
+    const picUrl = parsePicUrl(cityData);
+    document.body.style.backgroundImage = `url("${picUrl}")`;
+  } catch (error) {
+    console.error(error);
+    iconToBackgroundImg();
+  }
 }
 
 async function updateWeather(cityName) {
@@ -206,4 +202,3 @@ input.addEventListener("keypress", function (e) {
     input.value = "";
   }
 });
-
