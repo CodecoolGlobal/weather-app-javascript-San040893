@@ -14,6 +14,7 @@ body {
   font-family: "Lato", sans-serif;  
   height: 100vh;
   position: relative;
+  background-color: black;
 
   background-image: url(./img/vienna_bg.jpg);
     background-size: cover;
@@ -21,7 +22,7 @@ body {
 }
 
 .main-container {
-    min-height: 80vh;
+    max-height: 80vh;
     min-width: 30rem;
     display: flex;
     flex-direction: column;
