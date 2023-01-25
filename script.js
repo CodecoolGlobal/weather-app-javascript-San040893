@@ -67,7 +67,7 @@ function renderForecastHourly(element, time, temp_c, condition, avg) {
 }
 
 function renderWeatherBox(weatherData) {
-  /*  
+   
   document.getElementById("current-city").innerText = weatherData.location.name;
   document.getElementById(
     "current-temperature"
@@ -80,8 +80,8 @@ function renderWeatherBox(weatherData) {
   document.getElementById(
     "geo-position"
   ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
- */
-  document.getElementById("weather-box").innerHTML = `
+
+/*   document.getElementById("weather-box").innerHTML = `
       <h2 class="weather-box-city medium-text">${weatherData.location.name}</h2>
       <h1 class="weather-temperature extra-large-text">${
         weatherData.current.temp_c
@@ -93,7 +93,7 @@ function renderWeatherBox(weatherData) {
         weatherData.current.feelslike_c
       }&#8451;</p>
       <p class="weather-position">H:${weatherData.location.lat.toFixed()} L:${weatherData.location.lon.toFixed()}</p>
-    `;
+    `; */
 }
 
 function renderWeather(weatherData) {
@@ -114,6 +114,7 @@ function renderWeather(weatherData) {
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     condition = condition.text;
+    weatherSimpleData["condition"] = condition;
     const averageTemp = weatherData.forecast.forecastday[0].day.avgtemp_c;
     renderForecastHourly(el, time, temp_c, condition, averageTemp);
   });
@@ -168,8 +169,8 @@ async function getPicUrl(dataName) {
   }
 }
 
-function iconToWeather(condition) {
-  
+function iconToWeather() {
+  console.log(weatherSimpleData.condition);
   if (true) {
     return document.body.style.backgroundImage = "./img/sunny.jpg";
   } else {
