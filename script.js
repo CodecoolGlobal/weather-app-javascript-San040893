@@ -58,7 +58,7 @@ function getWeatherData(parameters) {
 
 function renderForecastHourly(element, time, temp_c, condition, avg) {
   const weatherIconClass = weatherTextToIcon[condition];
-  element.style.height = 7 + ((5/30) * temp_c)  + "rem";
+  element.style.height = 7 + (5 / 30) * temp_c + "rem";
 
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
@@ -67,7 +67,6 @@ function renderForecastHourly(element, time, temp_c, condition, avg) {
 }
 
 function renderWeatherBox(weatherData) {
-   
   document.getElementById("current-city").innerText = weatherData.location.name;
   document.getElementById(
     "current-temperature"
@@ -80,20 +79,6 @@ function renderWeatherBox(weatherData) {
   document.getElementById(
     "geo-position"
   ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
-
-/*   document.getElementById("weather-box").innerHTML = `
-      <h2 class="weather-box-city medium-text">${weatherData.location.name}</h2>
-      <h1 class="weather-temperature extra-large-text">${
-        weatherData.current.temp_c
-      }&#8451</h1>
-      <h3 class="weather-condition medium-text">${
-        weatherData.current.condition.text
-      }</h3>
-      <p class="feels-like">Feels like ${
-        weatherData.current.feelslike_c
-      }&#8451;</p>
-      <p class="weather-position">H:${weatherData.location.lat.toFixed()} L:${weatherData.location.lon.toFixed()}</p>
-    `; */
 }
 
 function renderWeather(weatherData) {
@@ -114,7 +99,7 @@ function renderWeather(weatherData) {
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     condition = condition.text;
-    weatherSimpleData["condition"] = condition;
+   
     const averageTemp = weatherData.forecast.forecastday[0].day.avgtemp_c;
     renderForecastHourly(el, time, temp_c, condition, averageTemp);
   });
@@ -134,7 +119,7 @@ function renderWeather(weatherData) {
   ).innerHTML = `${weatherData.current.cloud} %`;
 }
 
-function toggleSpinner(){
+function toggleSpinner() {
   document.getElementById("spinner-box").classList.toggle("hide");
   document.getElementById("weather-box").classList.toggle("hide");
 }
@@ -160,22 +145,28 @@ async function getPicUrl(dataName) {
     mode: "cors",
     cache: "default",
   });
-
   try {
     const cityData = await getJSONData(myRequest, "Problem getting Locations");
-    return cityData.photos[0].src.medium.split("?")[0];
+    console.log(cityData);
+    if (cityData.photos.length === 0) {
+      return iconToWeather();
+    } else {
+      return cityData.photos[0].src.original
+    }
   } catch (error) {
-    iconToWeather();    
+    console.log("error");
   }
 }
 
 function iconToWeather() {
   console.log(weatherSimpleData.condition);
-  if (true) {
-    return document.body.style.backgroundImage = "./img/sunny.jpg";
-  } else {
-    return document.body.style.backgroundImage = "./img/cloudy.jpg";
-  
+  if (weatherSimpleData.condition === "Partly cloudy") {
+    return "./img/cloudy.jpg";
+  } else if(weatherSimpleData.condition === "Patchy rain possible"){
+    return "./img/rainy.jpg"
+  }
+  else {
+    return "./img/cloudy.jpg";
   }
 }
 
