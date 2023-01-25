@@ -3,7 +3,6 @@ const weather_api_path = "http://api.weatherapi.com/v1";
 const current_weather = "/current.json";
 const forecast_weather = "/forecast.json";
 
-
 const input = document.getElementById("input-cities");
 const dataList = document.getElementById("cities");
 
@@ -56,11 +55,10 @@ function getWeatherData(parameters) {
   return getJSONData(url, "Problem getting Weather Data");
 }
 
-
 function renderForecastHourly(element, time, temp_c, condition, avg) {
-  console.log(time, temp_c, condition, avg)
+  console.log(time, temp_c, condition, avg);
   const weatherIconClass = weatherTextToIcon[condition];
-  element.style.height = 7 + temp_c/ avg + "rem";
+  element.style.height = 7 + temp_c / avg + "rem";
 
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
@@ -72,14 +70,16 @@ function renderWeather(weatherData) {
   // render weather prognosis
   const d = new Date();
   // let hour = d.getHours();
-  let hour = parseInt(weatherData.location.localtime.split(" ")[1].split(":")[0]);
+  let hour = parseInt(
+    weatherData.location.localtime.split(" ")[1].split(":")[0]
+  );
 
   const forecastHourlyUpdateEl = document.querySelectorAll(
     ".weather-prognosis-box-hour"
   );
   forecastHourlyUpdateEl.forEach((el, index) => {
     let day = hour + index > 24 ? 1 : 0;
-    
+
     let { time, temp_c, condition } =
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
@@ -114,16 +114,11 @@ function renderWeather(weatherData) {
   ).innerHTML = `${weatherData.current.cloud} %`;
 }
 
-
-
-
-
-
-async function getPicUrl (dataName){
-  const PEXELS_API = "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db "
-  const picUrl = `https://api.pexels.com/v1/search`
+async function getPicUrl(dataName) {
+  const PEXELS_API =
+    "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
+  const picUrl = `https://api.pexels.com/v1/search`;
   const cityParameter = {
-
     query: dataName,
     orientation: "Landscape",
     size: "medium",
@@ -142,12 +137,11 @@ async function getPicUrl (dataName){
   });
 
   const cityData = await getJSONData(myRequest, "Problem getting Locations");
-  return (cityData.photos[0].src.medium).split("?")[0];
+
+  return cityData.photos[0].src.medium.split("?")[0];
 }
 
-
-
-async function changeBackgroundPic(cityName){
+async function changeBackgroundPic(cityName) {
   document.body.style.backgroundImage = `url("${await getPicUrl(cityName)}")`;
 }
 
@@ -165,6 +159,6 @@ input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     updateWeather(input.value);
     changeBackgroundPic(input.value);
-    input.value="";
+    input.value = "";
   }
 });
