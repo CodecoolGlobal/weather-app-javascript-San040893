@@ -44,10 +44,29 @@ body {
 }
 
 .input-box {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   /* min-height: 10rem; */
   width: 80%;
   margin: 1rem 0 3rem 0;
+}
+
+.favourites-icon {
+  display: inline-block;
+  /* padding-right: 1rem; */
+  font-size: 3rem;
+  color: #b1b1b1;
+}
+
+.favourites-icon:hover {
+  color: gold;
+  text-shadow: #777 0 0 .5rem;;
+}
+
+.favourites-icon-active {
+  color: gold;
+  text-shadow: #777 0 0 .5rem;;
 }
 
 .input-box__input {
@@ -61,6 +80,7 @@ body {
   color: white;
   transition: all .5s;
 }
+
 .input-box__input:hover,
 .input-box__input:active,
 .input-box__input:focus {
@@ -69,6 +89,8 @@ body {
   color: #777;
   outline: none;
 }
+
+
 
 .weather-box {
   display: block;

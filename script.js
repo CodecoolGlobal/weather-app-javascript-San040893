@@ -184,7 +184,7 @@ async function updateWeather(cityName) {
     toggleSpinner();
     const parameters = {
       key: API_KEY,
-      q: `${cityName}, city`,
+      q: cityName,
       days: 2,
     };
     const weatherData = await getWeatherData(formatParameters(parameters));
