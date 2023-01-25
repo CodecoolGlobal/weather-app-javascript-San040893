@@ -188,7 +188,8 @@ async function updateWeather(cityName) {
     renderWeather(weatherData);
   } catch (error) {
     resetHTMLWeatherData();
-    document.getElementById("current-city").innerText = "City not found";
+    iconToBackgroundImg();
+    currentCityEl.innerText = "City not found";
     console.error(error);
   } finally {
     toggleSpinnerAndWeatherBox();
