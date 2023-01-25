@@ -202,3 +202,10 @@ input.addEventListener("keypress", function (e) {
     input.value = "";
   }
 });
+
+function main() {
+  updateWeather("Vienna");
+  changeBackgroundPic("Vienna");
+}
+
+main();
