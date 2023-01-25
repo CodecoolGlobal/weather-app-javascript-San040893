@@ -53,7 +53,7 @@ input.addEventListener("keyup", () => {
 
 function getWeatherData(parameters) {
   const url = `${weather_api_path}${forecast_weather}${parameters}`;
-    return getJSONData(url, "Problem getting Weather Data");
+  return getJSONData(url, "Problem getting Weather Data");
 }
 
 function resetHTMLWeatherData() {
@@ -84,9 +84,8 @@ function renderForecastHourly(weatherData) {
   });
 }
 
-
 function renderWeather(weatherData) {
-  weatherSimpleData["condition"] = weatherData.current.condition.text;;
+  weatherSimpleData["condition"] = weatherData.current.condition.text;
 
   // render weather prognosis
   ////////////////////////////////////////////////////////////
@@ -119,7 +118,7 @@ function renderWeather(weatherData) {
 function cityNotFoundMsg() {
 }
 
-function toggleSpinner(){
+function toggleSpinner() {
   document.getElementById("spinner-box").classList.toggle("hide");
   document.getElementById("weather-box").classList.toggle("hide");
 }
@@ -151,7 +150,7 @@ async function getPicUrl(dataName) {
     if (cityData.photos.length === 0) {
       return iconToWeather();
     } else {
-      return cityData.photos[0].src.original
+      return cityData.photos[0].src.original;
     }
   } catch (error) {
     console.log("error");
@@ -160,13 +159,18 @@ async function getPicUrl(dataName) {
 
 function iconToWeather() {
   console.log(weatherSimpleData.condition);
-  if (weatherSimpleData.condition === "Partly cloudy") {
+  if (weatherSimpleData.condition.includes("cloudy")) {
     return "./img/cloudy.jpg";
-  } else if(weatherSimpleData.condition === "Patchy rain possible"){
-    return "./img/rainy.jpg"
-  }
-  else {
-    return "./img/cloudy.jpg";
+  } else if (weatherSimpleData.condition.includes("rain")) {
+    return "./img/rainy.jpg";
+  } else if (weatherSimpleData.condition.includes("Sunny")) {
+    return "./img/sunny.jpg";
+  } else if (weatherSimpleData.condition.includes("snow")) {
+    return "./img/snow.jpg";
+  } else if (weatherSimpleData.condition.includes("fog")) {
+    return "./img/jog.webp";
+  } else {
+    return "./img/none.jpg.jpg";
   }
 }
 
@@ -191,7 +195,6 @@ async function updateWeather(cityName) {
   finally {
     toggleSpinner();
   }
-
 }
 
 input.addEventListener("keypress", function (e) {
