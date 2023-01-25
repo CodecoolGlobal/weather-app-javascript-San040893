@@ -56,9 +56,8 @@ function getWeatherData(parameters) {
 }
 
 function renderForecastHourly(element, time, temp_c, condition, avg) {
-  console.log(time, temp_c, condition, avg);
   const weatherIconClass = weatherTextToIcon[condition];
-  element.style.height = 7 + temp_c / avg + "rem";
+  element.style.height = 7 + ((5/30) * temp_c)  + "rem";
 
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
@@ -129,6 +128,11 @@ function renderWeather(weatherData) {
   ).innerHTML = `${weatherData.current.cloud} %`;
 }
 
+function toggleSpinner(){
+  document.getElementById("spinner-box").classList.toggle("hide");
+  document.getElementById("weather-box").classList.toggle("hide");
+}
+
 async function getPicUrl(dataName) {
   const PEXELS_API =
     "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
@@ -161,12 +165,14 @@ async function changeBackgroundPic(cityName) {
 }
 
 async function updateWeather(cityName) {
+  toggleSpinner();
   const parameters = {
     key: API_KEY,
     q: cityName,
     days: 2,
   };
   const weatherData = await getWeatherData(formatParameters(parameters));
+  toggleSpinner();
   renderWeather(weatherData);
 }
 

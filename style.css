@@ -40,10 +40,12 @@ body {
     backdrop-filter: blur(1.5rem);
     background-image: linear-gradient(to bottom,rgba(255, 255, 255, 0.4),rgba(255, 255, 255, 0));
     box-shadow: 0 1rem 10rem rgba(0, 0, 0, .2);
+    transition: all .3s;
 }
 
 .input-box {
   display: block;
+  /* min-height: 10rem; */
   width: 80%;
   margin: 1rem 0 3rem 0;
 }
@@ -114,6 +116,45 @@ body {
   font-size: large;
 }
 
+.spinner-box {
+  width: 20rem;
+  height: 20rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+/* PULSE BUBBLES */
+
+.pulse-container {
+  width: 10rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pulse-bubble {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #ffffff;
+}
+
+.pulse-bubble-1 {
+    animation: pulse .4s ease 0s infinite alternate;
+}
+.pulse-bubble-2 {
+    animation: pulse .4s ease .2s infinite alternate;
+}
+.pulse-bubble-3 {
+    animation: pulse .4s ease .4s infinite alternate;
+}
+
+/* END OF PULSE BUBBLES */
+
+
+
 .small-text {
   font-size: 1.0rem;
 }
@@ -132,4 +173,16 @@ body {
 
 .hide {
   display: none;
+}
+
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: .25;
+    transform: scale(.75);
+  }
 }
