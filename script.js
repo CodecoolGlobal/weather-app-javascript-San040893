@@ -56,6 +56,11 @@ function getWeatherData(parameters) {
     return getJSONData(url, "Problem getting Weather Data");
 }
 
+function resetHTMLWeatherData() {
+  document.querySelectorAll(".reset").forEach(el=>el.innerHTML="-");
+};
+
+
 function renderForecastHourly(weatherData) {
   const hour = parseInt(
     weatherData.location.localtime.split(" ")[1].split(":")[0]
@@ -74,8 +79,8 @@ function renderForecastHourly(weatherData) {
 
     el.innerHTML = `
       <i class="${weatherTextToIcon[condition.text]}"></i>  
-      <div class="small-text">${temp_c}&#8451;</div>
-      <div class="small-text">${time} h</div>`;
+      <div class="small-text reset">${temp_c}&#8451;</div>
+      <div class="small-text reset">${time} h</div>`;
   });
 }
 
@@ -112,8 +117,6 @@ function renderWeather(weatherData) {
 }
 
 function cityNotFoundMsg() {
-  document.getElementById("current-city").innerText = "City not found";
-  console.error("City not found");
 }
 
 function toggleSpinner(){
@@ -181,12 +184,12 @@ async function updateWeather(cityName) {
     };
     const weatherData = await getWeatherData(formatParameters(parameters));
     renderWeather(weatherData);
-    toggleSpinner();
-
   } catch (error) {
-    document.location.reload();
-    cityNotFoundMsg()
-    // toggleSpinner();
+    resetHTMLWeatherData();
+    document.getElementById("current-city").innerText = "City not found";
+  }
+  finally {
+    toggleSpinner();
   }
 
 }
