@@ -142,22 +142,28 @@ async function getPicUrl(dataName) {
     mode: "cors",
     cache: "default",
   });
-
   try {
     const cityData = await getJSONData(myRequest, "Problem getting Locations");
-    return cityData.photos[0].src.medium.split("?")[0];
+    console.log(cityData);
+    if (cityData.photos.length === 0) {
+      return iconToWeather();
+    } else {
+      return cityData.photos[0].src.original
+    }
   } catch (error) {
-    iconToWeather();    
+    console.log("error");
   }
 }
 
 function iconToWeather() {
   console.log(weatherSimpleData.condition);
-  if (true) {
-    return document.body.style.backgroundImage = "./img/sunny.jpg";
-  } else {
-    return document.body.style.backgroundImage = "./img/cloudy.jpg";
-  
+  if (weatherSimpleData.condition === "Partly cloudy") {
+    return "./img/cloudy.jpg";
+  } else if(weatherSimpleData.condition === "Patchy rain possible"){
+    return "./img/rainy.jpg"
+  }
+  else {
+    return "./img/cloudy.jpg";
   }
 }
 
