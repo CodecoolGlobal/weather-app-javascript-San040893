@@ -118,18 +118,9 @@ function toggleSpinnerAndWeatherBox() {
   document.getElementById("weather-box").classList.toggle("hide");
 }
 
-async function getPicData(cityName) {
-  const cityParameter = {
-    query: cityName,
-    orientation: "Landscape",
-    size: "medium",
-    per_page: 1,
-  };
-  const cityParameterString = formatParameters(cityParameter);
-  const requestPicUrl = `${pexelApiUrl}${cityParameterString}`;
-
+async function getPicData(cityParameter) {
+  const requestPicUrl = `${pexelApiUrl}${cityParameter}`;
   const myHeaders = new Headers({ Authorization: pexelsApiKEY });
-
   const myRequest = new Request(requestPicUrl, {
     method: "GET",
     headers: myHeaders,
@@ -167,7 +158,13 @@ function iconToBackgroundImg() {
 
 async function changeBackgroundPic(cityName) {
   try {
-    const cityData = await getPicData(cityName);
+    const cityParameter = {
+      query: cityName,
+      orientation: "Landscape",
+      size: "medium",
+      per_page: 1,
+    };
+    const cityData = await getPicData(formatParameters(cityParameter));
     const picUrl = parsePicUrl(cityData);
     document.body.style.backgroundImage = `url("${picUrl}")`;
   } catch (error) {
