@@ -57,7 +57,7 @@ function getWeatherData(parameters) {
 }
 
 function resetHTMLWeatherData() {
-  document.querySelectorAll(".reset").forEach(el=>el.innerHTML="-");
+  document.querySelectorAll(".reset").forEach(el=>el.innerText="-");
 };
 
 
@@ -72,11 +72,10 @@ function renderForecastHourly(weatherData) {
   //////////////////////////////////////////////////////
   forecastHourlyUpdateEl.forEach((el, index) => {
     const day = hour + index > 24 ? 1 : 0;
-    const { time, temp_c, condition } =
-      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
+    let { time, temp_c, condition } = weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     el.style.height = 7 + (5 / 30) * temp_c + "rem";
-
+    
     el.innerHTML = `
       <i class="${weatherTextToIcon[condition.text]}"></i>  
       <div class="small-text reset">${temp_c}&#8451;</div>
@@ -86,8 +85,7 @@ function renderForecastHourly(weatherData) {
 
 function renderWeather(weatherData) {
   weatherSimpleData["condition"] = weatherData.current.condition.text;
-
-  // render weather prognosis
+  
   ////////////////////////////////////////////////////////////
   // render Weather-box
   document.getElementById("current-city").innerText = weatherData.location.name;
@@ -113,6 +111,9 @@ function renderWeather(weatherData) {
   document.getElementById(
     "current-cloud"
   ).innerHTML = `${weatherData.current.cloud} %`;
+
+  // render weather prognosis
+  renderForecastHourly(weatherData);
 }
 
 function cityNotFoundMsg() {
@@ -146,7 +147,7 @@ async function getPicUrl(dataName) {
   });
   try {
     const cityData = await getJSONData(myRequest, "Problem getting Locations");
-    console.log(cityData);
+    // console.log(cityData);
     if (cityData.photos.length === 0) {
       return iconToWeather();
     } else {
@@ -170,7 +171,7 @@ function iconToWeather() {
   } else if (weatherSimpleData.condition.includes("fog")) {
     return "./img/jog.webp";
   } else {
-    return "./img/none.jpg.jpg";
+    return "./img/none.jpg";
   }
 }
 
@@ -183,7 +184,7 @@ async function updateWeather(cityName) {
     toggleSpinner();
     const parameters = {
       key: API_KEY,
-      q: cityName,
+      q: `${cityName}, city`,
       days: 2,
     };
     const weatherData = await getWeatherData(formatParameters(parameters));
@@ -191,8 +192,8 @@ async function updateWeather(cityName) {
   } catch (error) {
     resetHTMLWeatherData();
     document.getElementById("current-city").innerText = "City not found";
-  }
-  finally {
+    console.error(error);
+  } finally {
     toggleSpinner();
   }
 }
