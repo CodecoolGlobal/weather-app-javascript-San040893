@@ -57,12 +57,8 @@ function getWeatherData(parameters) {
 
 function renderForecastHourly(element, time, temp_c, condition, avg) {
   const weatherIconClass = weatherTextToIcon[condition];
-<<<<<<< HEAD
-  element.style.height = 7 + temp_c / avg + "rem";
-=======
   element.style.height = 7 + ((5/30) * temp_c)  + "rem";
 
->>>>>>> f754be5eb7c3a1295a99b2a58a4d8ba59a3d86b9
   element.innerHTML = `
       <i class="${weatherIconClass}"></i>  
       <div class="small-text">${temp_c}&#8451;</div>
@@ -147,11 +143,6 @@ function renderWeather(weatherData) {
   ).innerHTML = `${weatherData.current.cloud} %`;
 }
 
-function toggleSpinner(){
-  document.getElementById("spinner-box").classList.toggle("hide");
-  document.getElementById("weather-box").classList.toggle("hide");
-}
-
 async function getPicUrl(dataName) {
   const PEXELS_API =
     "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
@@ -178,14 +169,13 @@ async function getPicUrl(dataName) {
     const cityData = await getJSONData(myRequest, "Problem getting Locations");
     return cityData.photos[0].src.medium.split("?")[0];
   } catch (error) {
-    iconToWeather();
-    
+    iconToWeather();    
   }
 }
 
-function iconToWeather() {
+function iconToWeather(condition) {
   
-  if (weatherTextToIcon[condition] == "sunny") {
+  if () {
     return document.body.style.backgroundImage = "./img/sunny.jpg";
   } else {
     return document.body.style.backgroundImage = "./img/cloudy.jpg";
@@ -198,14 +188,12 @@ async function changeBackgroundPic(cityName) {
 }
 
 async function updateWeather(cityName) {
-  toggleSpinner();
   const parameters = {
     key: API_KEY,
     q: cityName,
     days: 2,
   };
   const weatherData = await getWeatherData(formatParameters(parameters));
-  toggleSpinner();
   renderWeather(weatherData);
 }
 
