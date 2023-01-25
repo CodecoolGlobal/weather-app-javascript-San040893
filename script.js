@@ -48,26 +48,44 @@ input.addEventListener("keyup", () => {
   const url = `http://api.weatherapi.com/v1/search.json?key=${API_KEY}&q=${input.value}`;
   getJSONData(url, "Problem getting Locations")
     .then((locations) => populateAutocompleteList(locations))
-    .catch((error) => console.log("Error", error));
+    .catch((error) => console.error("Error", error));
 });
 
 function getWeatherData(parameters) {
   const url = `${weather_api_path}${forecast_weather}${parameters}`;
-  return getJSONData(url, "Problem getting Weather Data");
+    return getJSONData(url, "Problem getting Weather Data");
 }
 
-function renderForecastHourly(element, time, temp_c, condition, avg) {
-  const weatherIconClass = weatherTextToIcon[condition];
-  element.style.height = 7 + ((5/30) * temp_c)  + "rem";
+function renderForecastHourly(weatherData) {
+  const hour = parseInt(
+    weatherData.location.localtime.split(" ")[1].split(":")[0]
+  );
+  const forecastHourlyUpdateEl = document.querySelectorAll(
+    ".weather-prognosis-box-hour"
+  );
 
-  element.innerHTML = `
-      <i class="${weatherIconClass}"></i>  
+  //////////////////////////////////////////////////////
+  forecastHourlyUpdateEl.forEach((el, index) => {
+    const day = hour + index > 24 ? 1 : 0;
+    const { time, temp_c, condition } =
+      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
+    time = parseInt(time.split(" ")[1]);
+    el.style.height = 7 + (5 / 30) * temp_c + "rem";
+
+    el.innerHTML = `
+      <i class="${weatherTextToIcon[condition.text]}"></i>  
       <div class="small-text">${temp_c}&#8451;</div>
       <div class="small-text">${time} h</div>`;
+  });
 }
 
-function renderWeatherBox(weatherData) {
-   
+
+function renderWeather(weatherData) {
+  weatherSimpleData["condition"] = weatherData.current.condition.text;;
+
+  // render weather prognosis
+  ////////////////////////////////////////////////////////////
+  // render Weather-box
   document.getElementById("current-city").innerText = weatherData.location.name;
   document.getElementById(
     "current-temperature"
@@ -80,48 +98,7 @@ function renderWeatherBox(weatherData) {
   document.getElementById(
     "geo-position"
   ).innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
-
-/*   document.getElementById("weather-box").innerHTML = `
-      <h2 class="weather-box-city medium-text">${weatherData.location.name}</h2>
-      <h1 class="weather-temperature extra-large-text">${
-        weatherData.current.temp_c
-      }&#8451</h1>
-      <h3 class="weather-condition medium-text">${
-        weatherData.current.condition.text
-      }</h3>
-      <p class="feels-like">Feels like ${
-        weatherData.current.feelslike_c
-      }&#8451;</p>
-      <p class="weather-position">H:${weatherData.location.lat.toFixed()} L:${weatherData.location.lon.toFixed()}</p>
-    `; */
-}
-
-function renderWeather(weatherData) {
-  // render weather prognosis
-  const d = new Date();
-  // let hour = d.getHours();
-  let hour = parseInt(
-    weatherData.location.localtime.split(" ")[1].split(":")[0]
-  );
-
-  const forecastHourlyUpdateEl = document.querySelectorAll(
-    ".weather-prognosis-box-hour"
-  );
-  forecastHourlyUpdateEl.forEach((el, index) => {
-    let day = hour + index > 24 ? 1 : 0;
-
-    let { time, temp_c, condition } =
-      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
-    time = parseInt(time.split(" ")[1]);
-    condition = condition.text;
-    weatherSimpleData["condition"] = condition;
-    const averageTemp = weatherData.forecast.forecastday[0].day.avgtemp_c;
-    renderForecastHourly(el, time, temp_c, condition, averageTemp);
-  });
-
-  // render Weather-box
-  renderWeatherBox(weatherData);
-
+  ////////////////////////////////////////////////////////////
   // render weather-extra-info
   document.getElementById(
     "current-wind"
@@ -132,6 +109,11 @@ function renderWeather(weatherData) {
   document.getElementById(
     "current-cloud"
   ).innerHTML = `${weatherData.current.cloud} %`;
+}
+
+function cityNotFoundMsg() {
+  document.getElementById("current-city").innerText = "City not found";
+  console.error("City not found");
 }
 
 function toggleSpinner(){
@@ -184,15 +166,23 @@ async function changeBackgroundPic(cityName) {
 }
 
 async function updateWeather(cityName) {
-  toggleSpinner();
-  const parameters = {
-    key: API_KEY,
-    q: cityName,
-    days: 2,
-  };
-  const weatherData = await getWeatherData(formatParameters(parameters));
-  toggleSpinner();
-  renderWeather(weatherData);
+  try {
+    toggleSpinner();
+    const parameters = {
+      key: API_KEY,
+      q: cityName,
+      days: 2,
+    };
+    const weatherData = await getWeatherData(formatParameters(parameters));
+    renderWeather(weatherData);
+    toggleSpinner();
+
+  } catch (error) {
+    document.location.reload();
+    cityNotFoundMsg()
+    // toggleSpinner();
+  }
+
 }
 
 input.addEventListener("keypress", function (e) {
