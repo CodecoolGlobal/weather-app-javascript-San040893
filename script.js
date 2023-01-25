@@ -143,11 +143,6 @@ function renderWeather(weatherData) {
   ).innerHTML = `${weatherData.current.cloud} %`;
 }
 
-function toggleSpinner(){
-  document.getElementById("spinner-box").classList.toggle("hide");
-  document.getElementById("weather-box").classList.toggle("hide");
-}
-
 async function getPicUrl(dataName) {
   const PEXELS_API =
     "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
@@ -174,14 +169,13 @@ async function getPicUrl(dataName) {
     const cityData = await getJSONData(myRequest, "Problem getting Locations");
     return cityData.photos[0].src.medium.split("?")[0];
   } catch (error) {
-    iconToWeather();
-    
+    iconToWeather();    
   }
 }
 
-function iconToWeather() {
+function iconToWeather(condition) {
   
-  if (weatherTextToIcon[condition] == "sunny") {
+  if () {
     return document.body.style.backgroundImage = "./img/sunny.jpg";
   } else {
     return document.body.style.backgroundImage = "./img/cloudy.jpg";
@@ -194,14 +188,12 @@ async function changeBackgroundPic(cityName) {
 }
 
 async function updateWeather(cityName) {
-  toggleSpinner();
   const parameters = {
     key: API_KEY,
     q: cityName,
     days: 2,
   };
   const weatherData = await getWeatherData(formatParameters(parameters));
-  toggleSpinner();
   renderWeather(weatherData);
 }
 
