@@ -20,6 +20,7 @@ const favoriteIcon = document.getElementById("favoriteIcon");
 
 const input = document.getElementById("input-cities");
 const dataList = document.getElementById("cities");
+const dataListFavorite = document.getElementById("favorite");
 
 const buildOptions = (text) => `<option value="${text}"></option>`;
 
@@ -55,13 +56,15 @@ function populateAutocompleteList(locations) {
 
 let myFavoriteCities = []
 favoriteIcon.addEventListener("click" , () => {
-  myFavoriteCities.push(currentCityEl.innerText);
-  console.log(myFavoriteCities)
+  
+  dataListFavorite.insertAdjacentHTML("beforeend", buildOptions(currentCityEl.innerText));
+ 
 });
+
 
 addEventListener("keypress", function (e) {
   if (e.key == "f") { 
-    console.log("succseed")
+    dataList.innerHTML = dataListFavorite.innerHTML
   }
 });
 
