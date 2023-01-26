@@ -1,30 +1,34 @@
 const weatherApiUrl = "http://api.weatherapi.com/v1";
-const weatherApiKEY = "6291b1eb57924843b8b234211232301";
+const weatherApiKey = "6291b1eb57924843b8b234211232301";
 const pexelApiUrl = `https://api.pexels.com/v1/search`;
-const pexelsApiKEY =
+const pexelsApiKey =
   "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
 
-const current_weather = "/current.json";
-const forecast_weather = "/forecast.json";
+
+const searchCityUrl = "/search.json";
+const currentWeatherUrl = "/current.json";
+const forecastWeatherUrl = "/forecast.json";
 const weatherSimpleData = {};
 
-const currentCityEl = document.getElementById("current-city");
-const currentTemperatureEl = document.getElementById("current-temperature");
-const currentConditionEl = document.getElementById("current-condition");
-const currentFeelEl = document.getElementById("current-feel");
-const geoPositionEl = document.getElementById("geo-position");
-const currentWind = document.getElementById("current-wind");
-const currentPercipEl = document.getElementById("current-precip_mm");
-const currentCloudEl = document.getElementById("current-cloud");
-const favoriteIcon = document.getElementById("favoriteIcon");
+const currentCityElement = document.getElementById("current-city");
+const currentTemperatureElement = document.getElementById("current-temperature");
+const currentConditionElement = document.getElementById("current-condition");
+const currentFeelElement = document.getElementById("current-feel");
+const geoPositionElement = document.getElementById("geo-position");
+const currentWindElement = document.getElementById("current-wind");
+const currentPercipElement = document.getElementById("current-precip_mm");
+const currentCloudElement = document.getElementById("current-cloud");
+const favoriteIconElement = document.getElementById("favoriteIcon");
+const hourlyForecastElements = document.querySelectorAll(
+  ".weather-prognosis-box-hour"
+);
 
-const input = document.getElementById("input-cities");
-const dataList = document.getElementById("cities");
-const dataListFavorite = document.getElementById("favorite");
-
-const buildOptions = (text) => `<option value="${text}"></option>`;
+const inputElement = document.getElementById("input-cities");
+const dataListElement = document.getElementById("cities");
+const dataListFavoriteElement = document.getElementById("favorite");
 
 
+//////////////////////////GENERAL FUNCTIONS //////////////////////////////////
 
 /**Function sends GET request to URL,
  * in case of success returns Promise,
@@ -50,30 +54,79 @@ function formatParameters(p) {
   return `?${parameters.toString()}`;
 }
 
-function populateAutocompleteList(locations) {
-  for (const location of locations) {
-    dataList.insertAdjacentHTML("beforeend", buildOptions(location.name));
-  }
+/**Function checks if a sentence starts with 
+ * a word 
+ * @param {string} word 
+ * @param {string} sentence 
+ * @returns {boolean} - true/false
+ */
+function doesStartWith(word, sentence){
+  const re = new RegExp(`^${word.toLowerCase()}`,"g");
+  return re.test(sentence.toLowerCase())
 }
 
-function getWeatherData(parameters) {
-  const url = `${weatherApiUrl}${forecast_weather}${parameters}`;
-  return getJSONData(url, "Problem getting Weather Data");
+
+////////////////////WEATHER DATA RELATED FUNCTIONS //////////////////////////
+
+async function updateWeather(cityName) {
+  try {
+    toggleSpinnerAndWeatherBox();
+    const parameters = {
+      key: weatherApiKey,
+      q: cityName,
+      days: 2,
+    };
+    const weatherData = await getWeatherData(formatParameters(parameters));
+    renderWeather(weatherData);
+  } catch (error) {
+    resetHTMLWeatherData();
+    iconToBackgroundImg();
+    currentCityElement.innerText = "City not found";
+    console.error(error);
+  } finally {
+    toggleSpinnerAndWeatherBox();
+  }
 }
 
 function resetHTMLWeatherData() {
   document.querySelectorAll(".reset").forEach((el) => (el.innerText = "-"));
 }
 
+function toggleSpinnerAndWeatherBox() {
+  document.getElementById("spinner-box").classList.toggle("hide");
+  document.getElementById("weather-box").classList.toggle("hide");
+}
+
+function getWeatherData(parameters) {
+  const url = `${weatherApiUrl}${forecastWeatherUrl}${parameters}`;
+  return getJSONData(url, "Problem getting Weather Data");
+}
+
+function renderWeather(weatherData) {
+  weatherSimpleData["condition"] = weatherData.current.condition.text;
+
+  // render Weather-box
+  currentCityElement.innerText = weatherData.location.name;
+  currentTemperatureElement.innerHTML = `${weatherData.current.temp_c}&#8451`;
+  currentConditionElement.innerText = weatherData.current.condition.text;
+  currentFeelElement.innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  geoPositionElement.innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+ 
+  // render weather-extra-info
+  currentWindElement.innerHTML = `${weatherData.current.wind_kph} kph `;
+  currentPercipElement.innerHTML = `${weatherData.current.precip_mm} mm`;
+  currentCloudElement.innerHTML = `${weatherData.current.cloud} %`;
+
+  // render weather prognosis
+  renderForecastHourly(weatherData);
+}
+
 function renderForecastHourly(weatherData) {
   const hour = parseInt(
     weatherData.location.localtime.split(" ")[1].split(":")[0]
   );
-  const forecastHourlyUpdateEl = document.querySelectorAll(
-    ".weather-prognosis-box-hour"
-  );
-
-  forecastHourlyUpdateEl.forEach((el, index) => {
+  
+  hourlyForecastElements.forEach((el, index) => {
     const day = hour + index > 24 ? 1 : 0;
     let { time, temp_c, condition } =
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
@@ -87,32 +140,28 @@ function renderForecastHourly(weatherData) {
   });
 }
 
-function renderWeather(weatherData) {
-  weatherSimpleData["condition"] = weatherData.current.condition.text;
+//////////////BACKGROUND IMAGE RELATED FUNCTIONS/////////////////////////
 
-  // render Weather-box
-  currentCityEl.innerText = weatherData.location.name;
-  currentTemperatureEl.innerHTML = `${weatherData.current.temp_c}&#8451`;
-  currentConditionEl.innerText = weatherData.current.condition.text;
-  currentFeelEl.innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
-  geoPositionEl.innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
-  // render weather-extra-info
-  currentWind.innerHTML = `${weatherData.current.wind_kph} kph `;
-  currentPercipEl.innerHTML = `${weatherData.current.precip_mm} mm`;
-  currentCloudEl.innerHTML = `${weatherData.current.cloud} %`;
-
-  // render weather prognosis
-  renderForecastHourly(weatherData);
-}
-
-function toggleSpinnerAndWeatherBox() {
-  document.getElementById("spinner-box").classList.toggle("hide");
-  document.getElementById("weather-box").classList.toggle("hide");
+async function changeBackgroundPic(cityName) {
+  try {
+    const cityParameter = {
+      query: cityName,
+      orientation: "Landscape",
+      size: "medium",
+      per_page: 1,
+    };
+    const cityData = await getPicData(formatParameters(cityParameter));
+    const picUrl = parsePicUrl(cityData);
+    document.body.style.backgroundImage = `url("${picUrl}")`;
+  } catch (error) {
+    console.error(error);
+    iconToBackgroundImg();
+  }
 }
 
 async function getPicData(cityParameter) {
   const requestPicUrl = `${pexelApiUrl}${cityParameter}`;
-  const myHeaders = new Headers({ Authorization: pexelsApiKEY });
+  const myHeaders = new Headers({ Authorization: pexelsApiKey });
   const myRequest = new Request(requestPicUrl, {
     method: "GET",
     headers: myHeaders,
@@ -152,84 +201,66 @@ function iconToBackgroundImg() {
   }
 }
 
-async function changeBackgroundPic(cityName) {
-  try {
-    const cityParameter = {
-      query: cityName,
-      orientation: "Landscape",
-      size: "medium",
-      per_page: 1,
-    };
-    const cityData = await getPicData(formatParameters(cityParameter));
-    const picUrl = parsePicUrl(cityData);
-    document.body.style.backgroundImage = `url("${picUrl}")`;
-  } catch (error) {
-    console.error(error);
-    iconToBackgroundImg();
+/////////////////////////INPUT RELATED FUNCTIONS//////////////////////
+
+function populateAutocompleteList(locations, searchCity) {
+  for (const location of locations) {
+    if (doesStartWith(searchCity, location.name)) {
+      const dataListOptionHTML = `<option value="${location.name}"></option>`
+      dataListElement.insertAdjacentHTML("beforeend", dataListOptionHTML);
+    }
   }
 }
 
-async function updateWeather(cityName) {
-  try {
-    toggleSpinnerAndWeatherBox();
-    const parameters = {
-      key: weatherApiKEY,
-      q: cityName,
-      days: 2,
-    };
-    const weatherData = await getWeatherData(formatParameters(parameters));
-    renderWeather(weatherData);
-  } catch (error) {
-    resetHTMLWeatherData();
-    iconToBackgroundImg();
-    currentCityEl.innerText = "City not found";
-    console.error(error);
-  } finally {
-    toggleSpinnerAndWeatherBox();
-  }
-}
-
+///////////////////////////MAIN FUNCTION///////////////////////////////
+//#####################################################################
 function main() {
   updateWeather("Vienna");
   changeBackgroundPic("Vienna");
 }
 
-////////////EVENT LISTENERS//////////////////////////
+//#####################################################################
+//////////////////////////////EVENT LISTENERS//////////////////////////
 
-favoriteIcon.addEventListener("click", () => {
-  dataListFavorite.insertAdjacentHTML(
+favoriteIconElement.addEventListener("click", () => {
+  dataListFavoriteElement.insertAdjacentHTML(
     "beforeend",
-    buildOptions(currentCityEl.innerText)
+    buildOptions(currentCityElement.innerText)
   );
 });
 
-document.addEventListener("keypress", function (e) {
+addEventListener("keypress", function (e) {
   if (e.key == "f") {
-    dataList.innerHTML = dataListFavorite.innerHTML;
+    dataListElement.innerHTML = dataListFavoriteElement.innerHTML;
   }
 });
 
-input.addEventListener("keyup", () => {
-  dataList.innerHTML = "";
+inputElement.addEventListener("keyup", () => {
+  dataListElement.innerHTML = "";
 
-  if (input.value.length < 3) {
+  if (inputElement.value.length < 3) {
     return;
   }
-  const url = `http://api.weatherapi.com/v1/search.json?key=${weatherApiKEY}&q=${input.value}`;
+  parameters = {
+    key: weatherApiKey,
+    q: inputElement.value
+  }
+  const url = `${weatherApiUrl}${searchCityUrl}${formatParameters(parameters)}`;
   getJSONData(url, "Problem getting Locations")
-    .then((locations) => populateAutocompleteList(locations))
+    .then((locations) => populateAutocompleteList(locations, inputElement.value))
     .catch((error) => console.error("Error", error));
 });
 
-input.addEventListener("keypress", function (e) {
+inputElement.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
-    updateWeather(input.value);
-    changeBackgroundPic(input.value);
-    input.value = "";
+    updateWeather(inputElement.value);
+    changeBackgroundPic(inputElement.value);
+    inputElement.value = "";
   }
 });
 
-
-
-//////////////Call to main function ////////////////
+//////////////CALL TO MAIN FUNCTION///////////////
+//################################################
 main();
+//################################################
+
