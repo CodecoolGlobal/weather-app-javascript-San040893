@@ -54,17 +54,16 @@ function populateAutocompleteList(locations) {
   }
 }
 
-let myFavoriteCities = []
-favoriteIcon.addEventListener("click" , () => {
-  
-  dataListFavorite.insertAdjacentHTML("beforeend", buildOptions(currentCityEl.innerText));
- 
+favoriteIcon.addEventListener("click", () => {
+  dataListFavorite.insertAdjacentHTML(
+    "beforeend",
+    buildOptions(currentCityEl.innerText)
+  );
 });
 
-
 addEventListener("keypress", function (e) {
-  if (e.key == "f") { 
-    dataList.innerHTML = dataListFavorite.innerHTML
+  if (e.key == "f") {
+    dataList.innerHTML = dataListFavorite.innerHTML;
   }
 });
 
