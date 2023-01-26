@@ -27,7 +27,7 @@ const inputElement = document.getElementById("input-cities");
 const dataListElement = document.getElementById("cities");
 const dataListFavoriteElement = document.getElementById("favorite");
 
-
+//############################################################################
 //////////////////////////GENERAL FUNCTIONS //////////////////////////////////
 
 /**Function sends GET request to URL,
@@ -200,11 +200,19 @@ function getLocationList(searchCity){
 
 function populateAutocompleteList(locations, searchCity) {
   for (const location of locations) {
-    if (doesStartWith(searchCity, location.name)) {
+    console.log(isInDataList(location.name))
+    if (doesStartWith(searchCity, location.name) && !isInDataList(location.name)) {
       const dataListOptionHTML = `<option value="${location.name}"></option>`
       dataListElement.insertAdjacentHTML("beforeend", dataListOptionHTML);
     }
   }
+}
+
+function isInDataList(name) {
+  const item = [];
+  document.querySelectorAll("option").forEach(el=>{item.push(el.value)});
+  if (item.includes(name)) return true;
+  return false;
 }
 
 ///////////////////////////MAIN FUNCTION///////////////////////////////
