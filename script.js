@@ -104,6 +104,7 @@ function getWeatherData(parameters) {
 
 function renderWeather(weatherData) {
   weatherSimpleData["condition"] = weatherData.current.condition.text.toLowerCase();
+  weatherSimpleData["is_day"] = weatherData.current.is_day;
 
   // render Weather-box
   currentCityElement.innerText = weatherData.location.name;
@@ -128,14 +129,16 @@ function renderForecastHourly(weatherData) {
   
   hourlyForecastElements.forEach((el, index) => {
     const day = hour + index > 24 ? 1 : 0;
-    let { time, temp_c, condition } =
+    let { time, temp_c, condition, is_day } =
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     el.style.height = 7 + (5 / 30) * temp_c + "rem";
     const iconStyle = weatherTextToIcon.find(el=>el.name === condition.text);
+    const iconStyleModule = is_day === 1 ? iconStyle.day : iconStyle.night;
+    console.log(is_day, condition.text);
 
     el.innerHTML = `
-      <i class="${iconStyle.day}"></i>  
+      <i class="${iconStyleModule}"></i>  
       <div class="small-text reset">${temp_c}&#8451;</div>
       <div class="small-text reset">${time} h</div>`;
   });
@@ -200,7 +203,6 @@ function getLocationList(searchCity){
 
 function populateAutocompleteList(locations, searchCity) {
   for (const location of locations) {
-    console.log(isInDataList(location.name))
     if (doesStartWith(searchCity, location.name) && !isInDataList(location.name)) {
       const dataListOptionHTML = `<option value="${location.name}"></option>`
       dataListElement.insertAdjacentHTML("beforeend", dataListOptionHTML);
