@@ -16,6 +16,7 @@ const geoPositionEl = document.getElementById("geo-position");
 const currentWind = document.getElementById("current-wind");
 const currentPercipEl = document.getElementById("current-precip_mm");
 const currentCloudEl = document.getElementById("current-cloud");
+const favoriteIcon = document.getElementById("favoriteIcon");
 
 const input = document.getElementById("input-cities");
 const dataList = document.getElementById("cities");
@@ -51,6 +52,18 @@ function populateAutocompleteList(locations) {
     dataList.insertAdjacentHTML("beforeend", buildOptions(location.name));
   }
 }
+
+let myFavoriteCities = []
+favoriteIcon.addEventListener("click" , () => {
+  myFavoriteCities.push(currentCityEl.innerText);
+  console.log(myFavoriteCities)
+});
+
+addEventListener("keypress", function (e) {
+  if (e.key == "f") { 
+    console.log("succseed")
+  }
+});
 
 input.addEventListener("keyup", () => {
   dataList.innerHTML = "";
@@ -151,6 +164,10 @@ function iconToBackgroundImg() {
     return "./img/snow.jpg";
   } else if (weatherSimpleData.condition.includes("fog")) {
     return "./img/jog.webp";
+  } else if (weatherSimpleData.condition.includes("Mist")) {
+    return "./img/jog.webp";
+  } else if (weatherSimpleData.condition.includes("Clear")) {
+    return "./img/sunny.jpg";
   } else {
     return "./img/none.jpg";
   }
