@@ -135,7 +135,6 @@ function renderForecastHourly(weatherData) {
     el.style.height = 7 + (5 / 30) * temp_c + "rem";
     const iconStyle = weatherTextToIcon.find(el=>el.name === condition.text);
     const iconStyleModule = is_day === 1 ? iconStyle.day : iconStyle.night;
-    console.log(is_day, condition.text);
 
     el.innerHTML = `
       <i class="${iconStyleModule}"></i>  
