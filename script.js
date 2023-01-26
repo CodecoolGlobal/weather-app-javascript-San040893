@@ -103,7 +103,7 @@ function getWeatherData(parameters) {
 }
 
 function renderWeather(weatherData) {
-  weatherSimpleData["condition"] = weatherData.current.condition.text;
+  weatherSimpleData["condition"] = weatherData.current.condition.text.toLowerCase();
 
   // render Weather-box
   currentCityElement.innerText = weatherData.location.name;
@@ -132,9 +132,10 @@ function renderForecastHourly(weatherData) {
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
     el.style.height = 7 + (5 / 30) * temp_c + "rem";
+    const iconStyle = weatherTextToIcon.find(el=>el.name === condition.text);
 
     el.innerHTML = `
-      <i class="${weatherTextToIcon[condition.text]}"></i>  
+      <i class="${iconStyle.day}"></i>  
       <div class="small-text reset">${temp_c}&#8451;</div>
       <div class="small-text reset">${time} h</div>`;
   });
@@ -181,27 +182,21 @@ function parsePicUrl(cityData) {
 }
 
 function iconToBackgroundImg() {
-  console.log(weatherSimpleData.condition);
-  if (weatherSimpleData.condition.includes("cloudy")) {
-    return "./img/cloudy.jpg";
-  } else if (weatherSimpleData.condition.includes("rain")) {
-    return "./img/rainy.jpg";
-  } else if (weatherSimpleData.condition.includes("Sunny")) {
-    return "./img/sunny.jpg";
-  } else if (weatherSimpleData.condition.includes("snow")) {
-    return "./img/snow.jpg";
-  } else if (weatherSimpleData.condition.includes("fog")) {
-    return "./img/jog.webp";
-  } else if (weatherSimpleData.condition.includes("Mist")) {
-    return "./img/jog.webp";
-  } else if (weatherSimpleData.condition.includes("Clear")) {
-    return "./img/sunny.jpg";
-  } else {
-    return "./img/none.jpg";
-  }
+  const imageResource = backgroundImage.find(el => weatherSimpleData.condition.includes(el.condition));
+  if (imageResource) return imageResource.imgSrc;
+  return "./img/none.jpg";
 }
 
 /////////////////////////INPUT RELATED FUNCTIONS//////////////////////
+
+function getLocationList(searchCity){
+  parameters = {
+    key: weatherApiKey,
+    q: searchCity
+  }
+  const url = `${weatherApiUrl}${searchCityUrl}${formatParameters(parameters)}`;
+  return getJSONData(url, "Problem getting Locations");
+}
 
 function populateAutocompleteList(locations, searchCity) {
   for (const location of locations) {
@@ -235,20 +230,18 @@ addEventListener("keypress", function (e) {
   }
 });
 
-inputElement.addEventListener("keyup", () => {
+inputElement.addEventListener("keyup", async () => {
   dataListElement.innerHTML = "";
 
   if (inputElement.value.length < 3) {
     return;
   }
-  parameters = {
-    key: weatherApiKey,
-    q: inputElement.value
+  try {
+    const locations = await getLocationList(inputElement.value);
+    populateAutocompleteList(locations, inputElement.value);
+  } catch (error) {
+    console.error("Error", error);
   }
-  const url = `${weatherApiUrl}${searchCityUrl}${formatParameters(parameters)}`;
-  getJSONData(url, "Problem getting Locations")
-    .then((locations) => populateAutocompleteList(locations, inputElement.value))
-    .catch((error) => console.error("Error", error));
 });
 
 inputElement.addEventListener("keypress", function (e) {
