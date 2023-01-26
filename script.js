@@ -24,6 +24,8 @@ const dataListFavorite = document.getElementById("favorite");
 
 const buildOptions = (text) => `<option value="${text}"></option>`;
 
+
+
 /**Function sends GET request to URL,
  * in case of success returns Promise,
  * otherwise error will be thrown
@@ -53,31 +55,6 @@ function populateAutocompleteList(locations) {
     dataList.insertAdjacentHTML("beforeend", buildOptions(location.name));
   }
 }
-
-favoriteIcon.addEventListener("click", () => {
-  dataListFavorite.insertAdjacentHTML(
-    "beforeend",
-    buildOptions(currentCityEl.innerText)
-  );
-});
-
-addEventListener("keypress", function (e) {
-  if (e.key == "f") {
-    dataList.innerHTML = dataListFavorite.innerHTML;
-  }
-});
-
-input.addEventListener("keyup", () => {
-  dataList.innerHTML = "";
-
-  if (input.value.length < 3) {
-    return;
-  }
-  const url = `http://api.weatherapi.com/v1/search.json?key=${weatherApiKEY}&q=${input.value}`;
-  getJSONData(url, "Problem getting Locations")
-    .then((locations) => populateAutocompleteList(locations))
-    .catch((error) => console.error("Error", error));
-});
 
 function getWeatherData(parameters) {
   const url = `${weatherApiUrl}${forecast_weather}${parameters}`;
@@ -212,6 +189,38 @@ async function updateWeather(cityName) {
   }
 }
 
+function main() {
+  updateWeather("Vienna");
+  changeBackgroundPic("Vienna");
+}
+
+////////////EVENT LISTENERS//////////////////////////
+
+favoriteIcon.addEventListener("click", () => {
+  dataListFavorite.insertAdjacentHTML(
+    "beforeend",
+    buildOptions(currentCityEl.innerText)
+  );
+});
+
+document.addEventListener("keypress", function (e) {
+  if (e.key == "f") {
+    dataList.innerHTML = dataListFavorite.innerHTML;
+  }
+});
+
+input.addEventListener("keyup", () => {
+  dataList.innerHTML = "";
+
+  if (input.value.length < 3) {
+    return;
+  }
+  const url = `http://api.weatherapi.com/v1/search.json?key=${weatherApiKEY}&q=${input.value}`;
+  getJSONData(url, "Problem getting Locations")
+    .then((locations) => populateAutocompleteList(locations))
+    .catch((error) => console.error("Error", error));
+});
+
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     updateWeather(input.value);
@@ -220,9 +229,7 @@ input.addEventListener("keypress", function (e) {
   }
 });
 
-function main() {
-  updateWeather("Vienna");
-  changeBackgroundPic("Vienna");
-}
 
+
+//////////////Call to main function ////////////////
 main();
