@@ -202,7 +202,7 @@ function getLocationList(searchCity){
 
 function populateAutocompleteList(locations, searchCity) {
   for (const location of locations) {
-    if (doesStartWith(searchCity, location.name) && !isInDataList(location.name)) {
+    if (doesStartWith(searchCity, location.name) /* && !isInDataList(location.name) */) {
       const dataListOptionHTML = `<option value="${location.name}"></option>`
       dataListElement.insertAdjacentHTML("beforeend", dataListOptionHTML);
     }
@@ -211,7 +211,8 @@ function populateAutocompleteList(locations, searchCity) {
 
 function isInDataList(name) {
   const item = [];
-  document.querySelectorAll("option").forEach(el=>{item.push(el.value)});
+  dataListElement.children.forEach(el=>{item.push(el.value)});
+  // document.querySelectorAll("option").forEach(el=>{item.push(el.value)});
   if (item.includes(name)) return true;
   return false;
 }
@@ -227,10 +228,9 @@ function main() {
 //////////////////////////////EVENT LISTENERS//////////////////////////
 
 favoriteIconElement.addEventListener("click", () => {
-  dataListFavoriteElement.insertAdjacentHTML(
-    "beforeend",
-    buildOptions(currentCityElement.innerText)
-  );
+  const dataListOptionHTML = `<option value="${currentCityElement.innerText}"></option>`
+  dataListFavoriteElement.insertAdjacentHTML( "beforeend", dataListOptionHTML);
+  // dataListFavoriteElement.insertAdjacentHTML( "beforeend", buildOptions(currentCityElement.innerText)  );
 });
 
 addEventListener("keypress", function (e) {
