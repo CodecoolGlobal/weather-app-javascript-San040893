@@ -280,13 +280,13 @@ const backgroundImage = [
     {
         condition: "rain",
         imgSrc: "./img/rainy.jpg",
-        imgSrcNight: "./img/night.webp"
+        imgSrcNight: "./img/rain_night.jpg"
 
     },
     {
         condition: "rain",
         imgSrc: "./img/rainy.jpg",
-        imgSrcNight: "./img/night.webp"
+        imgSrcNight: "./img/rain_night.jpg"
 
     },
     {
@@ -298,19 +298,19 @@ const backgroundImage = [
     {
         condition: "snow",
         imgSrc: "./img/snow.jpg",
-        imgSrcNight: "./img/night.webp"
+        imgSrcNight: "./img/snow_night.jpg"
 
     },
     {
         condition: "fog",
         imgSrc: "./img/jog.webp",
-        imgSrcNight: "./img/night.webp"
+        imgSrcNight: "./img/fog_night.jpg"
 
     },
     {
         condition: "mist",
         imgSrc: "./img/jog.webp",
-        imgSrcNight: "./img/night.webp"
+        imgSrcNight: "./img/fog_night.jpg"
 
     },
     {
@@ -322,7 +322,7 @@ const backgroundImage = [
     {
         condition: "none",
         imgSrc: "./img/none.jpg",
-        imgSrcNight: "./img/night.webp"
+        imgSrcNight: "./img/none.jpg"
 
     },
 

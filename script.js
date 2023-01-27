@@ -187,7 +187,8 @@ function parsePicUrl(cityData) {
 function iconToBackgroundImg() {
   if (weatherSimpleData.condition === null) return "./img/none.jpg";
   const imageResource = backgroundImage.find(el => weatherSimpleData.condition.toLowerCase().includes(el.condition));
-  return imageResource.imgSrc;
+  if (weatherSimpleData.is_day === 1) return imageResource.imgSrc;
+  return imageResource.imgSrcNight;
 }
 
 /////////////////////////INPUT RELATED FUNCTIONS//////////////////////
