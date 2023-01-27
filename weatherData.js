@@ -327,3 +327,35 @@ const backgroundImage = [
     },
 
 ]
+const temperatureBackgroundColor = [
+  {
+    min: -100,
+    color: "#28526387",
+    max: -0,
+  },
+  {
+    min: -0,
+    color: "#0f1b3187",
+    max: 10,
+  },
+  {
+    min: 10,
+    color: "#28634687",
+    max: 20,
+  },
+  {
+    min: 20,
+    color: "#63602887",
+    max: 30,
+  },
+  {
+    min: 30,
+    color: "#63502887",
+    max: 40,
+  },
+  {
+    min: 40,
+    color: "#632c2887",
+    max: 100,
+  }
+]
