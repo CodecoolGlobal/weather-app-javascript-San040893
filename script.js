@@ -80,6 +80,7 @@ async function updateWeather(cityName) {
     renderWeather(weatherData);
   } catch (error) {
     resetHTMLWeatherData();
+    weatherSimpleData["condition"] = null;
     iconToBackgroundImg();
     currentCityElement.innerText = "City not found";
     console.error(error);
@@ -184,12 +185,13 @@ function parsePicUrl(cityData) {
 }
 
 function iconToBackgroundImg() {
-  const imageResource = backgroundImage.find(el => weatherSimpleData.condition.includes(el.condition));
-  if (imageResource) return imageResource.imgSrc;
-  return "./img/none.jpg";
+  if (weatherSimpleData.condition === null) return "./img/none.jpg";
+  const imageResource = backgroundImage.find(el => weatherSimpleData.condition.toLowerCase().includes(el.condition));
+  return imageResource.imgSrc;
 }
 
 /////////////////////////INPUT RELATED FUNCTIONS//////////////////////
+const buildOptions = (text) => `<option value="${text}"></option>`;
 
 function getLocationList(searchCity){
   parameters = {
@@ -203,8 +205,7 @@ function getLocationList(searchCity){
 function populateAutocompleteList(locations, searchCity) {
   for (const location of locations) {
     if (doesStartWith(searchCity, location.name) /* && !isInDataList(location.name) */) {
-      const dataListOptionHTML = `<option value="${location.name}"></option>`
-      dataListElement.insertAdjacentHTML("beforeend", dataListOptionHTML);
+      dataListElement.insertAdjacentHTML("beforeend", buildOptions(location.name));
     }
   }
 }
@@ -212,7 +213,6 @@ function populateAutocompleteList(locations, searchCity) {
 function isInDataList(name) {
   const item = [];
   dataListElement.children.forEach(el=>{item.push(el.value)});
-  // document.querySelectorAll("option").forEach(el=>{item.push(el.value)});
   if (item.includes(name)) return true;
   return false;
 }
@@ -228,9 +228,7 @@ function main() {
 //////////////////////////////EVENT LISTENERS//////////////////////////
 
 favoriteIconElement.addEventListener("click", () => {
-  const dataListOptionHTML = `<option value="${currentCityElement.innerText}"></option>`
-  dataListFavoriteElement.insertAdjacentHTML( "beforeend", dataListOptionHTML);
-  // dataListFavoriteElement.insertAdjacentHTML( "beforeend", buildOptions(currentCityElement.innerText)  );
+  dataListFavoriteElement.insertAdjacentHTML( "beforeend", buildOptions(currentCityElement.innerText));
 });
 
 addEventListener("keypress", function (e) {
