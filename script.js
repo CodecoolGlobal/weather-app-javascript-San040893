@@ -1,4 +1,4 @@
-const weatherApiUrl = "http://api.weatherapi.com/v1";
+const WEATHER_API_URL = "http://api.weatherapi.com/v1";
 const weatherApiKey = "6291b1eb57924843b8b234211232301";
 const pexelApiUrl = `https://api.pexels.com/v1/search`;
 const pexelsApiKey =
@@ -61,21 +61,23 @@ function formatParameters(p) {
  * @returns {boolean} - true/false
  */
 function doesStartWith(word, sentence){
-  const re = new RegExp(`^${word.toLowerCase()}`,"g");
-  return re.test(sentence.toLowerCase())
+  const re = new RegExp(`^${word}`,"gi");
+  return re.test(sentence)
 }
 
 
 ////////////////////WEATHER DATA RELATED FUNCTIONS //////////////////////////
 
 async function updateWeather(cityName) {
+  toggleSpinnerAndWeatherBox();
+
+  const parameters = {
+    key: weatherApiKey,
+    q: cityName,
+    days: 2,
+  };
+
   try {
-    toggleSpinnerAndWeatherBox();
-    const parameters = {
-      key: weatherApiKey,
-      q: cityName,
-      days: 2,
-    };
     const weatherData = await getWeatherData(formatParameters(parameters));
     renderWeather(weatherData);
   } catch (error) {
@@ -84,9 +86,9 @@ async function updateWeather(cityName) {
     iconToBackgroundImg();
     currentCityElement.innerText = "City not found";
     console.error(error);
-  } finally {
-    toggleSpinnerAndWeatherBox();
   }
+
+  toggleSpinnerAndWeatherBox();
 }
 
 function resetHTMLWeatherData() {
@@ -99,8 +101,16 @@ function toggleSpinnerAndWeatherBox() {
 }
 
 function getWeatherData(parameters) {
-  const url = `${weatherApiUrl}${forecastWeatherUrl}${parameters}`;
-  return getJSONData(url, "Problem getting Weather Data");
+  if ("invalid data") {
+    return {
+      err: "Invalid data"
+    }
+  }
+
+  const url = `${WEATHER_API_URL}${forecastWeatherUrl}${parameters}`;
+  return {
+    ok: getJSONData(url, "Problem getting Weather Data")
+  };
 }
 
 function renderWeather(weatherData) {
@@ -129,7 +139,7 @@ function renderForecastHourly(weatherData) {
   );
   
   hourlyForecastElements.forEach((el, index) => {
-    const day = hour + index > 24 ? 1 : 0;
+    const day = (hour + index > 24) ? 1 : 0;
     let { time, temp_c, condition, is_day } =
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
@@ -200,21 +210,21 @@ function iconToBackgroundImg() {
 }
 
 /////////////////////////INPUT RELATED FUNCTIONS//////////////////////
-const buildOptions = (text) => `<option value="${text}"></option>`;
+const buildOption = (text) => `<option value="${text}"></option>`;
 
 function getLocationList(searchCity){
-  parameters = {
+  const parameters = {
     key: weatherApiKey,
     q: searchCity
   }
-  const url = `${weatherApiUrl}${searchCityUrl}${formatParameters(parameters)}`;
+  const url = `${WEATHER_API_URL}${searchCityUrl}${formatParameters(parameters)}`;
   return getJSONData(url, "Problem getting Locations");
 }
 
 function populateAutocompleteList(locations, searchCity) {
   for (const location of locations) {
     if (doesStartWith(searchCity, location.name) /* && !isInDataList(location.name) */) {
-      dataListElement.insertAdjacentHTML("beforeend", buildOptions(location.name));
+      dataListElement.insertAdjacentHTML("beforeend", buildOption(location.name));
     }
   }
 }
@@ -237,11 +247,11 @@ function main() {
 //////////////////////////////EVENT LISTENERS//////////////////////////
 
 favoriteIconElement.addEventListener("click", () => {
-  dataListFavoriteElement.insertAdjacentHTML( "beforeend", buildOptions(currentCityElement.innerText));
+  dataListFavoriteElement.insertAdjacentHTML( "beforeend", buildOption(currentCityElement.innerText));
 });
 
 addEventListener("keypress", function (e) {
-  if (e.key == "f") {
+  if (e.key === "f") {
     dataListElement.innerHTML = dataListFavoriteElement.innerHTML;
   }
 });
@@ -252,11 +262,12 @@ inputElement.addEventListener("keyup", async () => {
   if (inputElement.value.length < 3) {
     return;
   }
+
   try {
     const locations = await getLocationList(inputElement.value);
     populateAutocompleteList(locations, inputElement.value);
   } catch (error) {
-    console.error("Error", error);
+    console.error(error);
   }
 });
 
