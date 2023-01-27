@@ -133,7 +133,9 @@ function renderForecastHourly(weatherData) {
     let { time, temp_c, condition, is_day } =
       weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
     time = parseInt(time.split(" ")[1]);
-    el.style.height = 7 + (5 / 30) * temp_c + "rem";
+
+    changeElementStyle(el,temp_c);
+
     const iconStyle = weatherTextToIcon.find(el=>el.name === condition.text);
     const iconStyleModule = is_day === 1 ? iconStyle.day : iconStyle.night;
 
@@ -142,6 +144,12 @@ function renderForecastHourly(weatherData) {
       <div class="small-text reset">${temp_c}&#8451;</div>
       <div class="small-text reset">${time} h</div>`;
   });
+}
+
+function changeElementStyle(el, temp_c) {
+  el.style.height = 7 + (5 / 30) * temp_c + "rem";
+  const bgColor = temperatureBackgroundColor.find(el=> temp_c > el.min && temp_c <= el.max).color;
+  el.style.backgroundImage = `linear-gradient(to bottom, rgba(99, 179, 100, 0.08),${bgColor})`;
 }
 
 //////////////BACKGROUND IMAGE RELATED FUNCTIONS/////////////////////////

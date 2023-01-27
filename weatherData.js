@@ -350,7 +350,7 @@ const temperatureBackgroundColor = [
   },
   {
     min: 30,
-    color: "#63502887",
+    color: "#bd575287",
     max: 40,
   },
   {
