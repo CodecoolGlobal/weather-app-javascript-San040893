@@ -1,70 +1,329 @@
-const weatherTextToIcon = {
-    Overcast: "icon-weather-cloud",
-    Cloudy: "icon-weather-cloud",
-    Sunny: "icon-weather-sun",
-    "Partly cloudy": "icon-weather-variable-sun",
-    Clear: "icon-weather-sun",
+const weatherTextToIcon = [
+  { name: "Overcast", 
+    day: "icon-weather-cloud", 
+    night: "icon-weather-cloud", 
+    backgroundImg: "" },
+  { name: "Cloudy", 
+    day: "icon-weather-cloud", 
+    night: "icon-weather-cloud", 
+    backgroundImg: "" },
+  { name: "Sunny", 
+    day: "icon-weather-sun", 
+    night: "icon-weather-moon", 
+    backgroundImg: "" },
+  {
+    name: "Partly cloudy",
+    day: "icon-weather-variable-sun",
+    night: "icon-weather-variable-halfmoon",
+    backgroundImg: "",
+  },
+  { name: "Clear", 
+    day: "icon-weather-sun", 
+    night: "icon-weather-moon", 
+    backgroundImg: "" },
+  {
+    name: "Patchy rain possible",
+    day: "icon-weather-hail-sun",
+    night: "icon-weather-rain-halfmoon",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy light rain with thunder",
+    day: "icon-weather-hail-sun",
+    night: "icon-weather-rain-halfmoon",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy rain with thunder",
+    day: "icon-weather-hail-sun",
+    night: "icon-weather-rain-halfmoon",
+    backgroundImg: "",
+  },
+  { name: "Light rain", day: "icon-weather-rain", night: "icon-weather-rain", backgroundImg: "" },
+  {
+    name: "Moderate rain",
+    day: "icon-weather-rain",
+    night: "icon-weather-rain",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate rain at times",
+    day: "icon-weather-rain",
+    night: "icon-weather-rain",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy freezing rain",
+    day: "icon-weather-rain",
+    night: "icon-weather-rain",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy rain shower",
+    day: "icon-weather-rain",
+    night: "icon-weather-rain",
+    backgroundImg: "",
+  },
+  {
+    name: "Light rain shower",
+    day: "icon-weather-rain-sun",
+    night: "icon-weather-rain",
+    backgroundImg: "",
+  },
+  {
+    name: "Light freezing rain",
+    day: "icon-weather-rain-sun",
+    night: "icon-weather-rain-halfmoon",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy light rain",
+    day: "icon-weather-rain-sun",
+    night: "icon-weather-rain-halfmoon",
+    backgroundImg: "",
+  },
+  {
+    name: "Heavy rain",
+    day: "icon-weather-storm-11",
+    night: "icon-weather-storm-11",
+    backgroundImg: "",
+  },
+  {
+    name: "Heavy rain at times",
+    day: "icon-weather-storm-11",
+    night: "",
+    backgroundImg: "",
+  },
+  {
+    name: "Torrential rain shower",
+    day: "icon-weather-storm-11",
+    night: "icon-weather-storm-11",
+    backgroundImg: "",
+  },
+  {
+    name: "Light showers of ice pellets",
+    day: "icon-weather-storm-11",
+    night: "icon-weather-storm-11",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy showers of ice pellets",
+    day: "icon-weather-storm-11",
+    night: "icon-weather-storm-11",
+    backgroundImg: "",
+  },
+  {
+    name: "Thundery outbreaks possible",
+    day: "icon-weather-lightning",
+    night: "icon-weather-lightning",
+    backgroundImg: "",
+  },
+  {
+    name: "Light drizzle",
+    day: "icon-weather-mistyrain",
+    night: "icon-weather-mistyrain",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy light drizzle",
+    day: "icon-weather-mistyrain",
+    night: "icon-weather-mistyrain",
+    backgroundImg: "",
+  },
+  {
+    name: "Freezing drizzle",
+    day: "icon-weather-mistyrain",
+    night: "icon-weather-mistyrain",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy freezing drizzle possible",
+    day: "icon-weather-mistyrain",
+    night: "icon-weather-mistyrain",
+    backgroundImg: "",
+  },
+  {
+    name: "Heavy freezing drizzle",
+    day: "icon-weather-mistyrain",
+    night: "icon-weather-mistyrain",
+    backgroundImg: "",
+  },
+  {
+    name: "Light sleet",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  {
+    name: "Light sleet showers",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy sleet",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy sleet showers",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy sleet possible",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  { name: "Light snow", 
+    day: "icon-weather-snow", 
+    night: "icon-weather-snow", 
+    backgroundImg: "" },
+  {
+    name: "Patchy light snow",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy light snow with thunder",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "icon-weather-snow",
+  },
+  {
+    name: "Patchy snow possible",
+    day: "icon-weather-snow",
+    night: "icon-weather-snow",
+    backgroundImg: "",
+  },
+  {
+    name: "Blowing snow",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate snow",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy moderate snow",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Heavy snow",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Patchy heavy snow",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy snow with thunder",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Light snow showers",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Moderate or heavy snow showers",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Blizzard",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  {
+    name: "Ice pellets",
+    day: "icon-weather-snowflake",
+    night: "icon-weather-snowflake",
+    backgroundImg: "",
+  },
+  { name: "Fog", day: "icon-weather-fog", night: "icon-weather-fog", backgroundImg: "" },
+  { name: "Mist", day: "icon-weather-fog", night: "icon-weather-fog", backgroundImg: ""},
+  {
+    name: "Freezing fog",
+    day: "icon-weather-fog",
+    night: "icon-weather-fog",
+    backgroundImg: "",
+  },
+];
 
-    "Patchy rain possible": "icon-weather-hail-sun",
-    "Patchy light rain with thunder": "icon-weather-hail-sun",
-    "Moderate or heavy rain with thunder": "icon-weather-hail-sun",
+const backgroundImage = [
+    {
+        condition: "cloudy",
+        imgSrc: "./img/cloudy.jpg",
+        imgSrcNight: "./img/night.webp"
 
-    "Light rain": "icon-weather-rain",
-    "Light rain shower": "icon-weather-rain-sun",
-    "Light freezing rain": "icon-weather-rain-sun",
-    "Patchy light rain": "icon-weather-rain-sun",
+    },
+    {
+        condition: "rain",
+        imgSrc: "./img/rainy.jpg",
+        imgSrcNight: "./img/night.webp"
 
-    "Moderate rain": "icon-weather-rain",
-    "Moderate rain at times": "icon-weather-rain",
-    "Moderate or heavy freezing rain": "icon-weather-rain",
-    "Moderate or heavy rain shower": "icon-weather-rain",
+    },
+    {
+        condition: "rain",
+        imgSrc: "./img/rainy.jpg",
+        imgSrcNight: "./img/night.webp"
 
+    },
+    {
+        condition: "sunny",
+        imgSrc: "./img/sunny.jpg",
+        imgSrcNight: "./img/night.webp"
 
-    "Heavy rain": "icon-weather-storm-11",
-    "Heavy rain at times": "icon-weather-storm-11",
-    "Torrential rain shower": "icon-weather-storm-11",
-    "Light showers of ice pellets": "icon-weather-storm-11",
-    "Moderate or heavy showers of ice pellets": "icon-weather-storm-11",
+    },
+    {
+        condition: "snow",
+        imgSrc: "./img/snow.jpg",
+        imgSrcNight: "./img/night.webp"
 
-    "Thundery outbreaks possible": "icon-weather-lightning",
+    },
+    {
+        condition: "fog",
+        imgSrc: "./img/jog.webp",
+        imgSrcNight: "./img/night.webp"
 
-    "Light drizzle": "icon-weather-mistyrain",
-    "Patchy light drizzle": "icon-weather-mistyrain",
-    "Freezing drizzle": "icon-weather-mistyrain",
-    "Patchy freezing drizzle possible": "icon-weather-mistyrain",
-    "Heavy freezing drizzle": "icon-weather-mistyrain",
+    },
+    {
+        condition: "mist",
+        imgSrc: "./img/jog.webp",
+        imgSrcNight: "./img/night.webp"
 
+    },
+    {
+        condition: "clear",
+        imgSrc: "./img/sunny.jpg",
+        imgSrcNight: "./img/night.webp"
 
-    "Light sleet": "icon-weather-snow",
-    "Light sleet showers": "icon-weather-snow",
-    "Moderate or heavy sleet": "icon-weather-snow",
-    "Moderate or heavy sleet showers": "icon-weather-snow",
+    },
+    {
+        condition: "none",
+        imgSrc: "./img/none.jpg",
+        imgSrcNight: "./img/night.webp"
 
-    "Patchy sleet possible": "icon-weather-snow",
+    },
 
-    "Light snow": "icon-weather-snow",
-    "Patchy light snow": "icon-weather-snow",
-    "Patchy light snow with thunder": "icon-weather-snow",
-
-    "Patchy snow possible": "icon-weather-snow",
-
-    "Blowing snow": "icon-weather-snow",
-    "Moderate snow": "icon-weather-snowflake",
-    "Patchy moderate snow": "icon-weather-snowflake",
-
-    "Heavy snow": "icon-weather-snowflake",
-    "Patchy heavy snow": "icon-weather-snowflake",
-    "Moderate or heavy snow with thunder": "icon-weather-snowflake",
-
-    "Light snow showers": "icon-weather-snowflake",
-    "Moderate or heavy snow showers": "icon-weather-snowflake",
-    Blizzard: "icon-weather-snowflake",
-    "Ice pellets": "icon-weather-snowflake",
-
-    Fog: "icon-weather-fog",
-    Mist: "icon-weather-fog",
-    "Freezing fog": "icon-weather-fog",
-}
-
-
-
+]

@@ -1,28 +1,34 @@
 const weatherApiUrl = "http://api.weatherapi.com/v1";
-const weatherApiKEY = "6291b1eb57924843b8b234211232301";
+const weatherApiKey = "6291b1eb57924843b8b234211232301";
 const pexelApiUrl = `https://api.pexels.com/v1/search`;
-const pexelsApiKEY =
+const pexelsApiKey =
   "dg6HLQTArwkI5XkCB7eBS7I5rhH9Sm78PkdkRYoBheFizFof55f0Q5db ";
 
-const current_weather = "/current.json";
-const forecast_weather = "/forecast.json";
+
+const searchCityUrl = "/search.json";
+const currentWeatherUrl = "/current.json";
+const forecastWeatherUrl = "/forecast.json";
 const weatherSimpleData = {};
 
-const currentCityEl = document.getElementById("current-city");
-const currentTemperatureEl = document.getElementById("current-temperature");
-const currentConditionEl = document.getElementById("current-condition");
-const currentFeelEl = document.getElementById("current-feel");
-const geoPositionEl = document.getElementById("geo-position");
-const currentWind = document.getElementById("current-wind");
-const currentPercipEl = document.getElementById("current-precip_mm");
-const currentCloudEl = document.getElementById("current-cloud");
-const favoriteIcon = document.getElementById("favoriteIcon");
+const currentCityElement = document.getElementById("current-city");
+const currentTemperatureElement = document.getElementById("current-temperature");
+const currentConditionElement = document.getElementById("current-condition");
+const currentFeelElement = document.getElementById("current-feel");
+const geoPositionElement = document.getElementById("geo-position");
+const currentWindElement = document.getElementById("current-wind");
+const currentPercipElement = document.getElementById("current-precip_mm");
+const currentCloudElement = document.getElementById("current-cloud");
+const favoriteIconElement = document.getElementById("favoriteIcon");
+const hourlyForecastElements = document.querySelectorAll(
+  ".weather-prognosis-box-hour"
+);
 
-const input = document.getElementById("input-cities");
-const dataList = document.getElementById("cities");
-const dataListFavorite = document.getElementById("favorite");
+const inputElement = document.getElementById("input-cities");
+const dataListElement = document.getElementById("cities");
+const dataListFavoriteElement = document.getElementById("favorite");
 
-const buildOptions = (text) => `<option value="${text}"></option>`;
+//############################################################################
+//////////////////////////GENERAL FUNCTIONS //////////////////////////////////
 
 /**Function sends GET request to URL,
  * in case of success returns Promise,
@@ -48,84 +54,42 @@ function formatParameters(p) {
   return `?${parameters.toString()}`;
 }
 
-function populateAutocompleteList(locations) {
-  for (const location of locations) {
-    dataList.insertAdjacentHTML("beforeend", buildOptions(location.name));
-  }
+/**Function checks if a sentence starts with 
+ * a word 
+ * @param {string} word 
+ * @param {string} sentence 
+ * @returns {boolean} - true/false
+ */
+function doesStartWith(word, sentence){
+  const re = new RegExp(`^${word.toLowerCase()}`,"g");
+  return re.test(sentence.toLowerCase())
 }
 
-favoriteIcon.addEventListener("click", () => {
-  dataListFavorite.insertAdjacentHTML(
-    "beforeend",
-    buildOptions(currentCityEl.innerText)
-  );
-});
 
-addEventListener("keypress", function (e) {
-  if (e.key == "f") {
-    dataList.innerHTML = dataListFavorite.innerHTML;
+////////////////////WEATHER DATA RELATED FUNCTIONS //////////////////////////
+
+async function updateWeather(cityName) {
+  try {
+    toggleSpinnerAndWeatherBox();
+    const parameters = {
+      key: weatherApiKey,
+      q: cityName,
+      days: 2,
+    };
+    const weatherData = await getWeatherData(formatParameters(parameters));
+    renderWeather(weatherData);
+  } catch (error) {
+    resetHTMLWeatherData();
+    iconToBackgroundImg();
+    currentCityElement.innerText = "City not found";
+    console.error(error);
+  } finally {
+    toggleSpinnerAndWeatherBox();
   }
-});
-
-input.addEventListener("keyup", () => {
-  dataList.innerHTML = "";
-
-  if (input.value.length < 3) {
-    return;
-  }
-  const url = `http://api.weatherapi.com/v1/search.json?key=${weatherApiKEY}&q=${input.value}`;
-  getJSONData(url, "Problem getting Locations")
-    .then((locations) => populateAutocompleteList(locations))
-    .catch((error) => console.error("Error", error));
-});
-
-function getWeatherData(parameters) {
-  const url = `${weatherApiUrl}${forecast_weather}${parameters}`;
-  return getJSONData(url, "Problem getting Weather Data");
 }
 
 function resetHTMLWeatherData() {
   document.querySelectorAll(".reset").forEach((el) => (el.innerText = "-"));
-}
-
-function renderForecastHourly(weatherData) {
-  const hour = parseInt(
-    weatherData.location.localtime.split(" ")[1].split(":")[0]
-  );
-  const forecastHourlyUpdateEl = document.querySelectorAll(
-    ".weather-prognosis-box-hour"
-  );
-
-  forecastHourlyUpdateEl.forEach((el, index) => {
-    const day = hour + index > 24 ? 1 : 0;
-    let { time, temp_c, condition } =
-      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
-    time = parseInt(time.split(" ")[1]);
-    el.style.height = 7 + (5 / 30) * temp_c + "rem";
-
-    el.innerHTML = `
-      <i class="${weatherTextToIcon[condition.text]}"></i>  
-      <div class="small-text reset">${temp_c}&#8451;</div>
-      <div class="small-text reset">${time} h</div>`;
-  });
-}
-
-function renderWeather(weatherData) {
-  weatherSimpleData["condition"] = weatherData.current.condition.text;
-
-  // render Weather-box
-  currentCityEl.innerText = weatherData.location.name;
-  currentTemperatureEl.innerHTML = `${weatherData.current.temp_c}&#8451`;
-  currentConditionEl.innerText = weatherData.current.condition.text;
-  currentFeelEl.innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
-  geoPositionEl.innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
-  // render weather-extra-info
-  currentWind.innerHTML = `${weatherData.current.wind_kph} kph `;
-  currentPercipEl.innerHTML = `${weatherData.current.precip_mm} mm`;
-  currentCloudEl.innerHTML = `${weatherData.current.cloud} %`;
-
-  // render weather prognosis
-  renderForecastHourly(weatherData);
 }
 
 function toggleSpinnerAndWeatherBox() {
@@ -133,9 +97,74 @@ function toggleSpinnerAndWeatherBox() {
   document.getElementById("weather-box").classList.toggle("hide");
 }
 
+function getWeatherData(parameters) {
+  const url = `${weatherApiUrl}${forecastWeatherUrl}${parameters}`;
+  return getJSONData(url, "Problem getting Weather Data");
+}
+
+function renderWeather(weatherData) {
+  weatherSimpleData["condition"] = weatherData.current.condition.text.toLowerCase();
+  weatherSimpleData["is_day"] = weatherData.current.is_day;
+
+  // render Weather-box
+  currentCityElement.innerText = weatherData.location.name;
+  currentTemperatureElement.innerHTML = `${weatherData.current.temp_c}&#8451`;
+  currentConditionElement.innerText = weatherData.current.condition.text;
+  currentFeelElement.innerHTML = `Feels like ${weatherData.current.feelslike_c}&#8451`;
+  geoPositionElement.innerHTML = `H: ${weatherData.location.lat.toFixed()}  L:${weatherData.location.lon.toFixed()}`;
+ 
+  // render weather-extra-info
+  currentWindElement.innerHTML = `${weatherData.current.wind_kph} kph `;
+  currentPercipElement.innerHTML = `${weatherData.current.precip_mm} mm`;
+  currentCloudElement.innerHTML = `${weatherData.current.cloud} %`;
+
+  // render weather prognosis
+  renderForecastHourly(weatherData);
+}
+
+function renderForecastHourly(weatherData) {
+  const hour = parseInt(
+    weatherData.location.localtime.split(" ")[1].split(":")[0]
+  );
+  
+  hourlyForecastElements.forEach((el, index) => {
+    const day = hour + index > 24 ? 1 : 0;
+    let { time, temp_c, condition, is_day } =
+      weatherData.forecast.forecastday[day].hour[(hour + index) % 24];
+    time = parseInt(time.split(" ")[1]);
+    el.style.height = 7 + (5 / 30) * temp_c + "rem";
+    const iconStyle = weatherTextToIcon.find(el=>el.name === condition.text);
+    const iconStyleModule = is_day === 1 ? iconStyle.day : iconStyle.night;
+
+    el.innerHTML = `
+      <i class="${iconStyleModule}"></i>  
+      <div class="small-text reset">${temp_c}&#8451;</div>
+      <div class="small-text reset">${time} h</div>`;
+  });
+}
+
+//////////////BACKGROUND IMAGE RELATED FUNCTIONS/////////////////////////
+
+async function changeBackgroundPic(cityName) {
+  try {
+    const cityParameter = {
+      query: cityName,
+      orientation: "Landscape",
+      size: "medium",
+      per_page: 1,
+    };
+    const cityData = await getPicData(formatParameters(cityParameter));
+    const picUrl = parsePicUrl(cityData);
+    document.body.style.backgroundImage = `url("${picUrl}")`;
+  } catch (error) {
+    console.error(error);
+    iconToBackgroundImg();
+  }
+}
+
 async function getPicData(cityParameter) {
   const requestPicUrl = `${pexelApiUrl}${cityParameter}`;
-  const myHeaders = new Headers({ Authorization: pexelsApiKEY });
+  const myHeaders = new Headers({ Authorization: pexelsApiKey });
   const myRequest = new Request(requestPicUrl, {
     method: "GET",
     headers: myHeaders,
@@ -155,74 +184,85 @@ function parsePicUrl(cityData) {
 }
 
 function iconToBackgroundImg() {
-  console.log(weatherSimpleData.condition);
-  if (weatherSimpleData.condition.includes("cloudy")) {
-    return "./img/cloudy.jpg";
-  } else if (weatherSimpleData.condition.includes("rain")) {
-    return "./img/rainy.jpg";
-  } else if (weatherSimpleData.condition.includes("Sunny")) {
-    return "./img/sunny.jpg";
-  } else if (weatherSimpleData.condition.includes("snow")) {
-    return "./img/snow.jpg";
-  } else if (weatherSimpleData.condition.includes("fog")) {
-    return "./img/jog.webp";
-  } else if (weatherSimpleData.condition.includes("Mist")) {
-    return "./img/jog.webp";
-  } else if (weatherSimpleData.condition.includes("Clear")) {
-    return "./img/sunny.jpg";
-  } else {
-    return "./img/none.jpg";
+  const imageResource = backgroundImage.find(el => weatherSimpleData.condition.includes(el.condition));
+  if (imageResource) return imageResource.imgSrc;
+  return "./img/none.jpg";
+}
+
+/////////////////////////INPUT RELATED FUNCTIONS//////////////////////
+
+function getLocationList(searchCity){
+  parameters = {
+    key: weatherApiKey,
+    q: searchCity
+  }
+  const url = `${weatherApiUrl}${searchCityUrl}${formatParameters(parameters)}`;
+  return getJSONData(url, "Problem getting Locations");
+}
+
+function populateAutocompleteList(locations, searchCity) {
+  for (const location of locations) {
+    if (doesStartWith(searchCity, location.name) /* && !isInDataList(location.name) */) {
+      const dataListOptionHTML = `<option value="${location.name}"></option>`
+      dataListElement.insertAdjacentHTML("beforeend", dataListOptionHTML);
+    }
   }
 }
 
-async function changeBackgroundPic(cityName) {
-  try {
-    const cityParameter = {
-      query: cityName,
-      orientation: "Landscape",
-      size: "medium",
-      per_page: 1,
-    };
-    const cityData = await getPicData(formatParameters(cityParameter));
-    const picUrl = parsePicUrl(cityData);
-    document.body.style.backgroundImage = `url("${picUrl}")`;
-  } catch (error) {
-    console.error(error);
-    iconToBackgroundImg();
-  }
+function isInDataList(name) {
+  const item = [];
+  dataListElement.children.forEach(el=>{item.push(el.value)});
+  // document.querySelectorAll("option").forEach(el=>{item.push(el.value)});
+  if (item.includes(name)) return true;
+  return false;
 }
 
-async function updateWeather(cityName) {
-  try {
-    toggleSpinnerAndWeatherBox();
-    const parameters = {
-      key: weatherApiKEY,
-      q: cityName,
-      days: 2,
-    };
-    const weatherData = await getWeatherData(formatParameters(parameters));
-    renderWeather(weatherData);
-  } catch (error) {
-    resetHTMLWeatherData();
-    iconToBackgroundImg();
-    currentCityEl.innerText = "City not found";
-    console.error(error);
-  } finally {
-    toggleSpinnerAndWeatherBox();
-  }
-}
-
-input.addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    updateWeather(input.value);
-    changeBackgroundPic(input.value);
-    input.value = "";
-  }
-});
-
+///////////////////////////MAIN FUNCTION///////////////////////////////
+//#####################################################################
 function main() {
   updateWeather("Vienna");
   changeBackgroundPic("Vienna");
 }
 
+//#####################################################################
+//////////////////////////////EVENT LISTENERS//////////////////////////
+
+favoriteIconElement.addEventListener("click", () => {
+  const dataListOptionHTML = `<option value="${currentCityElement.innerText}"></option>`
+  dataListFavoriteElement.insertAdjacentHTML( "beforeend", dataListOptionHTML);
+  // dataListFavoriteElement.insertAdjacentHTML( "beforeend", buildOptions(currentCityElement.innerText)  );
+});
+
+addEventListener("keypress", function (e) {
+  if (e.key == "f") {
+    dataListElement.innerHTML = dataListFavoriteElement.innerHTML;
+  }
+});
+
+inputElement.addEventListener("keyup", async () => {
+  dataListElement.innerHTML = "";
+
+  if (inputElement.value.length < 3) {
+    return;
+  }
+  try {
+    const locations = await getLocationList(inputElement.value);
+    populateAutocompleteList(locations, inputElement.value);
+  } catch (error) {
+    console.error("Error", error);
+  }
+});
+
+inputElement.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    updateWeather(inputElement.value);
+    changeBackgroundPic(inputElement.value);
+    inputElement.value = "";
+  }
+});
+
+//////////////CALL TO MAIN FUNCTION///////////////
+//################################################
 main();
+//################################################
+
